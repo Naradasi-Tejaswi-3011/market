@@ -29,19 +29,18 @@ def save_campaign_to_db(user_id, product, audience, platform, industry, ai_outpu
     return str(result.inserted_id)
 
 
-def save_pitch_to_db(user_id, product, persona, industry, company_size, budget_range, ai_output):
+def save_pitch_to_db(user_id, product, description, persona, industry, customer_type, budget_preference, ai_output):
     """Save pitch to MongoDB"""
     from models import Pitch
     db = get_db()
     
-    pitch = Pitch(user_id, product, persona, industry, company_size, budget_range, ai_output)
+    pitch = Pitch(user_id, product, description, persona, industry, customer_type, budget_preference, ai_output)
     result = db.pitches.insert_one(pitch.to_dict())
     
     log_activity(user_id, 'pitch_created', {
         'product': product,
-        'persona': persona,
         'industry': industry,
-        'company_size': company_size
+        'customer_type': customer_type
     })
     
     return str(result.inserted_id)

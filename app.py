@@ -144,16 +144,17 @@ def generate_pitch_handler():
     data = request.get_json()
     
     product = data.get('product')
+    description = data.get('description')
     persona = data.get('persona')
     industry = data.get('industry')
-    company_size = data.get('company_size')
-    budget_range = data.get('budget_range')
+    customer_type = data.get('customer_type')
+    budget_preference = data.get('budget_preference')
     
-    if not all([product, persona, industry, company_size, budget_range]):
+    if not all([product, description, persona, industry, customer_type, budget_preference]):
         return jsonify({'error': 'Missing required fields'}), 400
     
     # Generate pitch using AI
-    ai_result = generate_pitch(product, persona, industry, company_size, budget_range)
+    ai_result = generate_pitch(product, description, persona, industry, customer_type, budget_preference)
     
     if ai_result['status'] != 'success':
         return jsonify(ai_result), 500
@@ -161,7 +162,7 @@ def generate_pitch_handler():
     # Save to database
     pitch_id = save_pitch_to_db(
         ObjectId(user_id),
-        product, persona, industry, company_size, budget_range,
+        product, description, persona, industry, customer_type, budget_preference,
         ai_result['pitch']
     )
     

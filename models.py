@@ -42,14 +42,15 @@ class Campaign:
 
 class Pitch:
     """Sales pitch AI output model"""
-    def __init__(self, user_id, product, persona, industry, company_size,
-                 budget_range, ai_output, created_at=None):
+    def __init__(self, user_id, product, description, persona, industry, customer_type,
+                 budget_preference, ai_output, created_at=None):
         self.user_id = user_id
         self.product = product
+        self.description = description
         self.persona = persona
         self.industry = industry
-        self.company_size = company_size
-        self.budget_range = budget_range
+        self.customer_type = customer_type
+        self.budget_preference = budget_preference
         self.ai_output = ai_output  # JSON with pitch details
         self.created_at = created_at or datetime.utcnow()
     
@@ -57,10 +58,11 @@ class Pitch:
         return {
             'user_id': self.user_id,
             'product': self.product,
+            'description': self.description,
             'persona': self.persona,
             'industry': self.industry,
-            'company_size': self.company_size,
-            'budget_range': self.budget_range,
+            'customer_type': self.customer_type,
+            'budget_preference': self.budget_preference,
             'ai_output': self.ai_output,
             'created_at': self.created_at
         }

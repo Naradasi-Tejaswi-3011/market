@@ -103,7 +103,7 @@ CRITICAL: Return ONLY the JSON object, nothing else."""
         }
 
 
-def generate_pitch(product, persona, industry, company_size, budget_range):
+def generate_pitch(product, description, persona, industry, customer_type, budget_preference):
     """
     Generate personalized sales pitch using Groq AI with explainability.
     Returns pitch data with confidence scoring.
@@ -114,24 +114,24 @@ def generate_pitch(product, persona, industry, company_size, budget_range):
     prompt = f"""You are a master sales strategist. Create a personalized sales pitch with explicit reasoning.
 
 INPUTS:
-- Product/Solution: {product}
+- Product Name: {product}
+- Product Description: {description}
 - Customer Persona: {persona}
 - Industry: {industry}
-- Company Size: {company_size}
-- Budget Range: {budget_range}
+- Costumer Type: {customer_type}
+- Budget Preference: {budget_preference}
 - Tone: {tone}
 
-Return ONLY valid JSON (no markdown, no code blocks):
+Return ONLY valid JSON (no markdown, no code blocks) with this exact structure:
 {{
-  "elevator_pitch": "Compelling 30-second pitch",
-  "value_proposition": "Clear value statement",
+  "elevator_pitch": "Compelling 1-minute+ pitch (approx 150-180 words) that flows naturally and covers the problem, solution, and value proposition in thorough detail.",
+  "value_proposition": "Clear value statement (1-2 sentences)",
   "key_differentiators": [
     "Differentiator 1",
     "Differentiator 2",
     "Differentiator 3"
   ],
   "personalized_cta": "Specific call-to-action for this persona",
-  "recommended_next_step": "Specific follow-up action",
   "deal_confidence_score": 75,
   "confidence_breakdown": {{
     "budget_alignment": "How budget matches value",
@@ -142,7 +142,7 @@ Return ONLY valid JSON (no markdown, no code blocks):
   "reasoning": {{
     "why_this_pitch": "Why this approach works for this persona",
     "industry_nuances": "How industry affects pitch",
-    "size_considerations": "How company size affects pitch",
+    "size_considerations": "How customer type affects pitch",
     "objection_handling": "Likely objections and responses"
   }},
   "recommended_next_actions": [
