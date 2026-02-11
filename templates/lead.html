@@ -1,0 +1,371 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Lead Scorer - MarketAI Suite</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+    <nav class="navbar">
+        <div class="nav-brand">
+            <h1><span class="logo-icon"></span> MarketAI Suite</h1>
+        </div>
+        <div class="nav-menu">
+            <a href="/" class="nav-link">Home</a>
+            <a href="/campaign" class="nav-link">Campaign Generator</a>
+            <button id="logoutBtn" class="btn btn-logout">Logout</button>
+        </div>
+    </nav>
+    
+    <main class="container">
+        <div class="page-header">
+            <h2>⭐ Lead Scoring System</h2>
+            <p>Intelligent lead qualification with detailed reasoning</p>
+        </div>
+        
+        <div class="content-grid">
+            <!-- Input Form -->
+            <div class="form-section">
+                <h3>Lead Profile</h3>
+                <form id="leadForm" class="form-group">
+                    <div>
+                        <label for="budget">Budget *</label>
+                        <select id="budget" name="budget" required>
+                            <option value="">Select budget...</option>
+                            <option value="Under $50K">Under $50K</option>
+                            <option value="$50K - $150K">$50K - $150K</option>
+                            <option value="$150K - $500K">$150K - $500K</option>
+                            <option value="$500K - $1M">$500K - $1M</option>
+                            <option value="Over $1M">Over $1M</option>
+                            <option value="Unknown">Unknown</option>
+                        </select>
+                    </div>
+                    
+                    <div>
+                        <label for="business_need">Business Need *</label>
+                        <input 
+                            type="text" 
+                            id="business_need" 
+                            name="business_need" 
+                            placeholder="e.g., Inventory management, marketing automation"
+                            required
+                        >
+                    </div>
+                    
+                    <div>
+                        <label for="urgency">Urgency *</label>
+                        <select id="urgency" name="urgency" required>
+                            <option value="">Select urgency...</option>
+                            <option value="High - Need immediately">High - Need immediately</option>
+                            <option value="Medium - Within 3 months">Medium - Within 3 months</option>
+                            <option value="Low - 6+ months">Low - 6+ months</option>
+                            <option value="Exploring options">Exploring options</option>
+                        </select>
+                    </div>
+                    
+                    <div>
+                        <label for="authority">Authority Level *</label>
+                        <select id="authority" name="authority" required>
+                            <option value="">Select authority...</option>
+                            <option value="Decision maker">Decision maker</option>
+                            <option value="Budget influence">Budget influence</option>
+                            <option value="Influencer">Influencer</option>
+                            <option value="End user">End user</option>
+                        </select>
+                    </div>
+                    
+                    <div>
+                        <label for="industry">Industry *</label>
+                        <select id="industry" name="industry" required>
+                            <option value="">Select industry...</option>
+                            <option value="SaaS">SaaS</option>
+                            <option value="Healthcare">Healthcare</option>
+                            <option value="EdTech">EdTech</option>
+                            <option value="Retail">Retail</option>
+                            <option value="FinTech">FinTech</option>
+                            <option value="Other">Other</option>
+                        </select>
+                    </div>
+                    
+                    <button type="submit" class="btn btn-primary btn-block">
+                        Score Lead
+                    </button>
+                </form>
+                
+                <div id="formMessage" class="message"></div>
+            </div>
+            
+            <!-- Output Results -->
+            <div class="results-section">
+                <div id="loadingSpinner" class="spinner" style="display: none;">
+                    <div class="spinner-content">
+                        <div class="spinner-circle"></div>
+                        <p>Analyzing lead profile...</p>
+                    </div>
+                </div>
+                
+                <div id="leadOutput" style="display: none;">
+                    <h3>📊 Lead Assessment</h3>
+                    
+                    <div class="output-card lead-score-card">
+                        <h4>Lead Score & Category</h4>
+                        <div class="score-display-large">
+                            <div class="score-circle-large" id="scoreCircle">0</div>
+                            <div class="score-label">
+                                <p id="scoreCategory" class="category"></p>
+                                <p id="conversionProb" class="conversion"></p>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="output-card">
+                        <h4>🔬 Detailed Analysis</h4>
+                        <div id="detailedReasoning" class="reasoning-section"></div>
+                    </div>
+                    
+                    <div class="output-card">
+                        <h4>📈 Score Breakdown</h4>
+                        <div id="scoreBreakdown" class="score-breakdown"></div>
+                    </div>
+                    
+                    <div class="output-card">
+                        <h4>⚠️ Risk Factors</h4>
+                        <div id="riskFactors" class="risk-list"></div>
+                    </div>
+                    
+                    <div class="output-card">
+                        <h4>🎯 Priority Recommendation</h4>
+                        <p id="priorityRec" class="priority-rec"></p>
+                    </div>
+                    
+                    <!-- Explainability Section -->
+                    <div class="output-card explainability">
+                        <h4>🔍 Why AI Scored This:</h4>
+                        <p>AI Analysis is based on:</p>
+                        <ul>
+                            <li>Budget alignment with typical industry spend</li>
+                            <li>Business need clarity and specificity</li>
+                            <li>Urgency signals indicating timeline</li>
+                            <li>Decision authority level</li>
+                            <li>Industry-specific conversion patterns</li>
+                        </ul>
+                        <p class="disclaimer">⚠️ This is an AI-assisted estimate. Human sales judgment remains critical.</p>
+                    </div>
+                    
+                    <!-- Recommended Actions -->
+                    <div class="output-card recommended-actions">
+                        <h4>📌 Recommended Next Actions:</h4>
+                        <div id="nextActions"></div>
+                    </div>
+                    
+                    <button id="scoreLeadBtn" class="btn btn-success">
+                        ✓ Save Scoring
+                    </button>
+                </div>
+                
+                <div id="previousLeads" class="previous-outputs">
+                    <h4>Previous Leads</h4>
+                    <div id="leadList" class="output-list"></div>
+                </div>
+            </div>
+        </div>
+    </main>
+    
+    <footer class="footer">
+        <p>&copy; 2026 MarketAI Suite - Explainable AI for Business Intelligence</p>
+    </footer>
+    
+    <script src="{{ url_for('static', filename='app.js') }}"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', checkAuth);
+        document.getElementById('leadForm').addEventListener('submit', scoreLead);
+        document.getElementById('logoutBtn').addEventListener('click', logout);
+        
+        async function scoreLead(e) {
+            e.preventDefault();
+            
+            const token = localStorage.getItem('token');
+            const formData = {
+                budget: document.getElementById('budget').value,
+                business_need: document.getElementById('business_need').value,
+                urgency: document.getElementById('urgency').value,
+                authority: document.getElementById('authority').value,
+                industry: document.getElementById('industry').value
+            };
+            
+            document.getElementById('loadingSpinner').style.display = 'flex';
+            document.getElementById('leadOutput').style.display = 'none';
+            document.getElementById('formMessage').textContent = '';
+            
+            try {
+                const response = await fetch('/api/leads/score', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': `Bearer ${token}`
+                    },
+                    body: JSON.stringify(formData)
+                });
+                
+                const data = await response.json();
+                document.getElementById('loadingSpinner').style.display = 'none';
+                
+                if (response.ok) {
+                    displayLeadOutput(data.lead_score);
+                    currentLeadId = data.lead_id;
+                    await loadLeads();
+                } else {
+                    document.getElementById('formMessage').textContent = data.error || 'Error scoring lead';
+                    document.getElementById('formMessage').classList.add('error');
+                }
+            } catch (error) {
+                document.getElementById('loadingSpinner').style.display = 'none';
+                document.getElementById('formMessage').textContent = 'Network error. Please try again.';
+                document.getElementById('formMessage').classList.add('error');
+            }
+        }
+        
+        function displayLeadOutput(leadScore) {
+            const score = leadScore.lead_score;
+            const category = leadScore.lead_category;
+            const convProb = leadScore.conversion_probability;
+            
+            // Score circle
+            document.getElementById('scoreCircle').textContent = score;
+            const color = category === 'Hot' ? '#10b981' : category === 'Warm' ? '#f59e0b' : '#ef4444';
+            document.getElementById('scoreCircle').style.borderColor = color;
+            
+            document.getElementById('scoreCategory').textContent = `${category} Lead`;
+            document.getElementById('conversionProb').textContent = `${convProb}% conversion probability`;
+            
+            // Detailed reasoning
+            const reasoning = leadScore.detailed_reasoning;
+            document.getElementById('detailedReasoning').innerHTML = `
+                <div class="reasoning-item">
+                    <strong>Budget Analysis:</strong>
+                    <p>${reasoning.budget_analysis}</p>
+                </div>
+                <div class="reasoning-item">
+                    <strong>Need Alignment:</strong>
+                    <p>${reasoning.need_alignment}</p>
+                </div>
+                <div class="reasoning-item">
+                    <strong>Urgency Signal:</strong>
+                    <p>${reasoning.urgency_signal}</p>
+                </div>
+                <div class="reasoning-item">
+                    <strong>Authority Assessment:</strong>
+                    <p>${reasoning.authority_assessment}</p>
+                </div>
+                <div class="reasoning-item">
+                    <strong>Industry Context:</strong>
+                    <p>${reasoning.industry_context}</p>
+                </div>
+            `;
+            
+            // Score breakdown
+            const breakdown = leadScore.score_breakdown;
+            document.getElementById('scoreBreakdown').innerHTML = `
+                <div class="breakdown-row">
+                    <div class="breakdown-item-grid">
+                        <label>Budget Fit: ${breakdown.budget_fit.score}/100</label>
+                        <div class="progress-bar">
+                            <div class="progress-fill" style="width: ${breakdown.budget_fit.score}%"></div>
+                        </div>
+                        <small>${breakdown.budget_fit.reasoning}</small>
+                    </div>
+                </div>
+                <div class="breakdown-row">
+                    <div class="breakdown-item-grid">
+                        <label>Need Clarity: ${breakdown.need_clarity.score}/100</label>
+                        <div class="progress-bar">
+                            <div class="progress-fill" style="width: ${breakdown.need_clarity.score}%"></div>
+                        </div>
+                        <small>${breakdown.need_clarity.reasoning}</small>
+                    </div>
+                </div>
+                <div class="breakdown-row">
+                    <div class="breakdown-item-grid">
+                        <label>Urgency Level: ${breakdown.urgency_level.score}/100</label>
+                        <div class="progress-bar">
+                            <div class="progress-fill" style="width: ${breakdown.urgency_level.score}%"></div>
+                        </div>
+                        <small>${breakdown.urgency_level.reasoning}</small>
+                    </div>
+                </div>
+                <div class="breakdown-row">
+                    <div class="breakdown-item-grid">
+                        <label>Authority Level: ${breakdown.authority_level.score}/100</label>
+                        <div class="progress-bar">
+                            <div class="progress-fill" style="width: ${breakdown.authority_level.score}%"></div>
+                        </div>
+                        <small>${breakdown.authority_level.reasoning}</small>
+                    </div>
+                </div>
+                <div class="breakdown-row">
+                    <div class="breakdown-item-grid">
+                        <label>Industry Fit: ${breakdown.industry_fit.score}/100</label>
+                        <div class="progress-bar">
+                            <div class="progress-fill" style="width: ${breakdown.industry_fit.score}%"></div>
+                        </div>
+                        <small>${breakdown.industry_fit.reasoning}</small>
+                    </div>
+                </div>
+            `;
+            
+            // Risk factors
+            document.getElementById('riskFactors').innerHTML = leadScore.risk_factors.length > 0
+                ? leadScore.risk_factors.map(r => `<div class="risk-item">⚠️ ${r}</div>`).join('')
+                : '<p>No identified risk factors</p>';
+            
+            // Priority recommendation
+            document.getElementById('priorityRec').textContent = leadScore.priority_recommendation;
+            
+            // Next actions
+            document.getElementById('nextActions').innerHTML = leadScore.next_actions
+                .map(a => `<div class="action-item">→ ${a}</div>`)
+                .join('');
+            
+            document.getElementById('leadOutput').style.display = 'block';
+        }
+        
+        async function loadLeads() {
+            const token = localStorage.getItem('token');
+            
+            try {
+                const response = await fetch('/api/leads', {
+                    headers: { 'Authorization': `Bearer ${token}` }
+                });
+                
+                if (response.ok) {
+                    const data = await response.json();
+                    const html = data.leads.length > 0
+                        ? data.leads.map((l, i) => `
+                            <div class="lead-item">
+                                <h5>Score: ${l.ai_output.lead_score} - ${l.ai_output.lead_category}</h5>
+                                <p>${l.business_need}</p>
+                                <small>${new Date(l.created_at).toLocaleString()}</small>
+                            </div>
+                        `).join('')
+                        : '<p>No leads scored yet</p>';
+                    
+                    document.getElementById('leadList').innerHTML = html;
+                }
+            } catch (error) {
+                console.error('Error loading leads:', error);
+            }
+        }
+        
+        let currentLeadId = null;
+        
+        document.addEventListener('DOMContentLoaded', () => {
+            loadLeads();
+            
+            document.getElementById('scoreLeadBtn').addEventListener('click', () => {
+                alert('Lead scoring saved successfully!');
+            });
+        });
+    </script>
+</body>
+</html>

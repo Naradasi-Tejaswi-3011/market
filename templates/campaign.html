@@ -1,0 +1,306 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Campaign Generator - MarketAI Suite</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+    <nav class="navbar">
+        <div class="nav-brand">
+            <h1><span class="logo-icon"></span> MarketAI Suite</h1>
+        </div>
+        <div class="nav-menu">
+            <a href="/" class="nav-link">Home</a>
+            <a href="/campaign" class="nav-link active">Campaign Generator</a>
+            <button id="logoutBtn" class="btn btn-logout">Logout</button>
+        </div>
+    </nav>
+    
+    <main class="container">
+        <div class="page-header">
+            <h2>🎯 Campaign Generator</h2>
+            <p>AI-powered marketing campaigns with full explainability</p>
+        </div>
+        
+        <div class="content-grid">
+            <!-- Input Form -->
+            <div class="form-section">
+                <h3>Campaign Inputs</h3>
+                <form id="campaignForm" class="form-group">
+                    <div>
+                        <label for="product">Product Description *</label>
+                        <input 
+                            type="text" 
+                            id="product" 
+                            name="product" 
+                            placeholder="e.g., AI email marketing tool"
+                            required
+                        >
+                    </div>
+                    
+                    <div>
+                        <label for="audience">Target Audience *</label>
+                        <input 
+                            type="text" 
+                            id="audience" 
+                            name="audience" 
+                            placeholder="e.g., Small business owners"
+                            required
+                        >
+                    </div>
+                    
+                    <div>
+                        <label for="platform">Platform *</label>
+                        <select id="platform" name="platform" required>
+                            <option value="">Select platform...</option>
+                            <option value="LinkedIn">LinkedIn</option>
+                            <option value="Facebook">Facebook</option>
+                            <option value="Twitter">Twitter</option>
+                            <option value="Instagram">Instagram</option>
+                            <option value="Email">Email</option>
+                            <option value="TikTok">TikTok</option>
+                            <option value="Multi-channel">Multi-channel</option>
+                        </select>
+                    </div>
+                    
+                    <div>
+                        <label for="industry">Industry *</label>
+                        <select id="industry" name="industry" required>
+                            <option value="">Select industry...</option>
+                            <option value="SaaS">SaaS</option>
+                            <option value="Healthcare">Healthcare</option>
+                            <option value="EdTech">EdTech</option>
+                            <option value="Retail">Retail</option>
+                            <option value="FinTech">FinTech</option>
+                            <option value="Other">Other</option>
+                        </select>
+                    </div>
+                    
+                    <button type="submit" class="btn btn-primary btn-block">
+                        Generate Campaign
+                    </button>
+                </form>
+                
+                <div id="formMessage" class="message"></div>
+            </div>
+            
+            <!-- Output Results -->
+            <div class="results-section">
+                <div id="loadingSpinner" class="spinner" style="display: none;">
+                    <div class="spinner-content">
+                        <div class="spinner-circle"></div>
+                        <p>Generating campaign with AI...</p>
+                    </div>
+                </div>
+                
+                <div id="campaignOutput" style="display: none;">
+                    <h3>🚀 Generated Campaign</h3>
+                    
+                    <div class="output-card">
+                        <h4>Campaign Objective</h4>
+                        <p id="objective"></p>
+                    </div>
+                    
+                    <div class="output-card">
+                        <h4>📝 Content Ideas</h4>
+                        <div id="contentIdeas"></div>
+                    </div>
+                    
+                    <div class="output-card">
+                        <h4>💬 Ad Copy Variants</h4>
+                        <div id="adCopy"></div>
+                    </div>
+                    
+                    <div class="output-card">
+                        <h4>🎯 CTA Suggestions</h4>
+                        <div id="ctaSuggestions"></div>
+                    </div>
+                    
+                    <div class="output-card">
+                        <h4>📅 Posting Strategy</h4>
+                        <p id="postingStrategy"></p>
+                    </div>
+                    
+                    <div class="metrics-grid">
+                        <div class="metric-box">
+                            <label>Estimated ROI</label>
+                            <p id="roiEstimate" class="metric-value"></p>
+                        </div>
+                        <div class="metric-box">
+                            <label>Conversion Probability</label>
+                            <p id="conversionProbability" class="metric-value"></p>
+                        </div>
+                    </div>
+                    
+                    <!-- Explainability Section -->
+                    <div class="output-card explainability">
+                        <h4>🔍 Why AI Generated This:</h4>
+                        <div id="reasoning" class="reasoning-section"></div>
+                    </div>
+                    
+                    <!-- Recommended Actions -->
+                    <div class="output-card recommended-actions">
+                        <h4>📌 Recommended Next Actions:</h4>
+                        <div id="nextActions"></div>
+                    </div>
+                    
+                    <button id="saveCampaignBtn" class="btn btn-success">
+                        ✓ Save Campaign
+                    </button>
+                </div>
+                
+                <div id="previousCampaigns" class="previous-outputs">
+                    <h4>Previous Campaigns</h4>
+                    <div id="campaignList" class="output-list"></div>
+                </div>
+            </div>
+        </div>
+    </main>
+    
+    <footer class="footer">
+        <p>&copy; 2026 MarketAI Suite - Explainable AI for Business Intelligence</p>
+    </footer>
+    
+    <script src="{{ url_for('static', filename='app.js') }}"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', checkAuth);
+        document.getElementById('campaignForm').addEventListener('submit', generateCampaign);
+        document.getElementById('logoutBtn').addEventListener('click', logout);
+        
+        async function generateCampaign(e) {
+            e.preventDefault();
+            
+            const token = localStorage.getItem('token');
+            const formData = {
+                product: document.getElementById('product').value,
+                audience: document.getElementById('audience').value,
+                platform: document.getElementById('platform').value,
+                industry: document.getElementById('industry').value
+            };
+            
+            // Show spinner
+            document.getElementById('loadingSpinner').style.display = 'flex';
+            document.getElementById('campaignOutput').style.display = 'none';
+            document.getElementById('formMessage').textContent = '';
+            
+            try {
+                const response = await fetch('/api/campaigns/generate', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': `Bearer ${token}`
+                    },
+                    body: JSON.stringify(formData)
+                });
+                
+                const data = await response.json();
+                document.getElementById('loadingSpinner').style.display = 'none';
+                
+                if (response.ok) {
+                    displayCampaignOutput(data.campaign);
+                    currentCampaignId = data.campaign_id;
+                    await loadCampaigns();
+                } else {
+                    document.getElementById('formMessage').textContent = data.error || 'Error generating campaign';
+                    document.getElementById('formMessage').classList.add('error');
+                }
+            } catch (error) {
+                document.getElementById('loadingSpinner').style.display = 'none';
+                document.getElementById('formMessage').textContent = 'Network error. Please try again.';
+                document.getElementById('formMessage').classList.add('error');
+            }
+        }
+        
+        function displayCampaignOutput(campaign) {
+            document.getElementById('objective').textContent = campaign.campaign_objective;
+            
+            document.getElementById('contentIdeas').innerHTML = campaign.content_ideas
+                .map(i => `<div class="idea-item"><strong>${i.title}</strong><p>${i.description}</p></div>`)
+                .join('');
+            
+            document.getElementById('adCopy').innerHTML = campaign.ad_copy_variants
+                .map(v => `<div class="copy-variant"><strong>${v.headline}</strong><p>${v.description}</p></div>`)
+                .join('');
+            
+            document.getElementById('ctaSuggestions').innerHTML = campaign.cta_suggestions
+                .map(c => `<span class="cta-tag">${c}</span>`)
+                .join('');
+            
+            document.getElementById('postingStrategy').textContent = campaign.posting_strategy;
+            document.getElementById('roiEstimate').textContent = campaign.roi_estimate;
+            document.getElementById('conversionProbability').textContent = campaign.conversion_probability;
+            
+            // Display reasoning
+            const reasoning = campaign.reasoning;
+            document.getElementById('reasoning').innerHTML = `
+                <div class="reasoning-item">
+                    <strong>Objective Strategy:</strong>
+                    <p>${reasoning.objective_why}</p>
+                </div>
+                <div class="reasoning-item">
+                    <strong>Content Approach:</strong>
+                    <p>${reasoning.content_strategy}</p>
+                </div>
+                <div class="reasoning-item">
+                    <strong>Platform Selection:</strong>
+                    <p>${reasoning.platform_fit}</p>
+                </div>
+                <div class="reasoning-item">
+                    <strong>Industry Considerations:</strong>
+                    <p>${reasoning.industry_considerations}</p>
+                </div>
+                <div class="reasoning-item">
+                    <strong>Success Metrics:</strong>
+                    <p>${reasoning.success_metrics}</p>
+                </div>
+            `;
+            
+            // Display next actions
+            document.getElementById('nextActions').innerHTML = campaign.recommended_next_actions
+                .map(a => `<div class="action-item">✓ ${a}</div>`)
+                .join('');
+            
+            document.getElementById('campaignOutput').style.display = 'block';
+        }
+        
+        async function loadCampaigns() {
+            const token = localStorage.getItem('token');
+            
+            try {
+                const response = await fetch('/api/campaigns', {
+                    headers: { 'Authorization': `Bearer ${token}` }
+                });
+                
+                if (response.ok) {
+                    const data = await response.json();
+                    const html = data.campaigns.length > 0
+                        ? data.campaigns.map((c, i) => `
+                            <div class="campaign-item">
+                                <h5>${c.product} - ${c.platform}</h5>
+                                <small>${new Date(c.created_at).toLocaleString()}</small>
+                            </div>
+                        `).join('')
+                        : '<p>No campaigns yet</p>';
+                    
+                    document.getElementById('campaignList').innerHTML = html;
+                }
+            } catch (error) {
+                console.error('Error loading campaigns:', error);
+            }
+        }
+        
+        let currentCampaignId = null;
+        
+        document.addEventListener('DOMContentLoaded', () => {
+            loadCampaigns();
+            
+            // Save campaign button
+            document.getElementById('saveCampaignBtn').addEventListener('click', () => {
+                alert('Campaign saved successfully!');
+            });
+        });
+    </script>
+</body>
+</html>
