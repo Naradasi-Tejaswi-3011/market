@@ -107,107 +107,79 @@
                     </div>
                 </div>
                 
-                <div id="leadOutput" style="display: none;">
-                    <h3>📊 Lead Assessment</h3>
-                    
-                    <!-- Overall Lead Qualification Score -->
-                    <div class="output-card lead-score-card">
-                        <h4>Overall Lead Qualification Score</h4>
-                        <div class="score-display-large">
-                            <div class="score-circle-large" id="scoreCircle">0</div>
-                            <div class="score-label">
-                                <p id="scoreTierText" class="category-tier"></p>
-                                <p id="scoreIntentText" class="intent-text"></p>
-                                <p id="conversionProb" class="conversion"></p>
-                            </div>
-                        </div>
-                    </div>
-                    
-                    <!-- Lead Snapshot Section -->
-                    <div class="output-card lead-snapshot">
-                        <h4>📸 Lead Snapshot</h4>
-                        <div class="snapshot-grid">
-                            <div class="snapshot-item">
-                                <strong>Industry</strong>
-                                <p id="snapshotIndustry">—</p>
-                            </div>
-                            <div class="snapshot-item">
-                                <strong>Budget Range</strong>
-                                <p id="snapshotBudget">—</p>
-                            </div>
-                            <div class="snapshot-item">
-                                <strong>Urgency Level</strong>
-                                <p id="snapshotUrgency">—</p>
-                            </div>
-                            <div class="snapshot-item">
-                                <strong>Authority Level</strong>
-                                <p id="snapshotAuthority">—</p>
-                            </div>
-                        </div>
-                        <div class="snapshot-need">
-                            <strong>Business Need Summary</strong>
-                            <p id="snapshotNeed">—</p>
-                        </div>
-                    </div>
-                    
-                    <!-- Detailed Analysis Section -->
-                    <div class="output-card">
-                        <h4>🔬 Detailed Analysis</h4>
-                        <div id="detailedReasoning" class="reasoning-section"></div>
-                    </div>
-                    
-                    <div class="output-card">
-                        <h4>📈 Score Breakdown</h4>
-                        <div id="scoreBreakdown" class="score-breakdown"></div>
-                    </div>
-                    
-                    <!-- Risk Factors with Color-Coded Level -->
-                    <div class="output-card">
-                        <h4>⚠️ Risk Assessment</h4>
-                        <div class="risk-level-container">
-                            <p><strong>Risk Level:</strong> <span id="riskLevel" class="risk-badge"></span></p>
-                        </div>
-                        <div id="riskFactors" class="risk-list"></div>
-                    </div>
-                    
-                    <!-- Sales Strategy Section -->
-                    <div class="output-card sales-strategy">
-                        <h4>🎯 Recommended Sales Strategy</h4>
-                        <div id="salesStrategy" class="strategy-content"></div>
-                    </div>
-                    
-                    <div class="output-card">
-                        <h4>� Priority Recommendation</h4>
-                        <p id="priorityRec" class="priority-rec"></p>
-                    </div>
-                    
-                    <!-- Explainability Section -->
-                    <div class="output-card explainability">
-                        <h4>🔍 Scoring Factors Considered:</h4>
-                        <ul>
-                            <li>Budget capacity relative to industry benchmarks</li>
-                            <li>Business need definition and clarity</li>
-                            <li>Timeline and procurement urgency signals</li>
-                            <li>Decision-making authority and influence level</li>
-                            <li>Industry-specific conversion and fit patterns</li>
-                        </ul>
-                        <p class="disclaimer">⚠️ AI-assisted qualification. Human sales judgment remains essential for final assessment.</p>
-                    </div>
-                    
-                    <!-- Recommended Actions -->
-                    <div class="output-card recommended-actions">
-                        <h4>📌 Recommended Next Actions:</h4>
-                        <div id="nextActions"></div>
-                    </div>
-                    
-                    <button id="scoreLeadBtn" class="btn btn-success">
-                        ✓ Save Scoring
-                    </button>
+                <!-- Initial Placeholder Card -->
+                <div id="placeholderCard" class="placeholder-card">
+                    <div class="placeholder-icon">🤖</div>
+                    <h3>Lead Qualification Insights</h3>
+                    <p>AI evaluates leads based on <strong>Budget, Need, Urgency, Authority,</strong> and <strong>Industry fit.</strong></p>
+                    <p class="secondary-text">Enter lead details and click "Score Lead" to see a detailed assessment.</p>
                 </div>
-                
-                <div id="previousLeads" class="previous-outputs">
-                    <h4>Previous Leads</h4>
-                    <div id="leadList" class="output-list"></div>
+
+                <div id="leadOutput" style="display: none;">
+                    <div class="insights-header">
+                        <h3>📊 Lead Qualification Insights</h3>
+                    </div>
+
+                    <!-- Tab Navigation -->
+                    <div class="tabs-container">
+                        <div class="tabs-nav">
+                            <button class="tab-btn active" onclick="switchTab('overview')">Overview</button>
+                            <button class="tab-btn" onclick="switchTab('breakdown')">Breakdown</button>
+                            <button class="tab-btn" onclick="switchTab('analysis')">Detailed Analysis</button>
+                            <button class="tab-btn" onclick="switchTab('strategy')">Strategy</button>
+                        </div>
+                    </div>
+                    
+                    <!-- Tab Contents -->
+                    <div class="tab-content" id="overview-tab">
+                        <div class="output-card lead-score-card">
+                            <div class="score-display-large">
+                                <div class="score-circle-large" id="scoreCircle">0</div>
+                                <div class="score-label">
+                                    <p id="scoreTierText" class="category-tier"></p>
+                                    <p id="scoreIntentText" class="intent-text"></p>
+                                    <p id="conversionProb" class="conversion"></p>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="output-card risk-card">
+                            <div class="risk-level-container">
+                                <p><strong>Risk Level:</strong> <span id="riskLevel" class="risk-badge"></span></p>
+                            </div>
+                            <div id="riskFactors" class="risk-list"></div>
+                        </div>
+                    </div>
+
+                    <div class="tab-content" id="breakdown-tab" style="display: none;">
+                        <div class="output-card">
+                            <h4>📈 Score Breakdown</h4>
+                            <div id="scoreBreakdown" class="score-breakdown"></div>
+                        </div>
+                    </div>
+
+                    <div class="tab-content" id="analysis-tab" style="display: none;">
+                        <div class="output-card">
+                            <h4>🔬 Detailed Analysis</h4>
+                            <div id="detailedReasoning" class="reasoning-section"></div>
+                        </div>
+                    </div>
+
+                    <div class="tab-content" id="strategy-tab" style="display: none;">
+                        <div class="output-card sales-strategy">
+                            <h4>🎯 Recommended Sales Strategy</h4>
+                            <div id="salesStrategy" class="strategy-content"></div>
+                        </div>
+                        <div class="output-card recommended-actions">
+                            <h4>📌 Recommended Next Actions:</h4>
+                            <div id="nextActions"></div>
+                        </div>
+                    </div>
+
+                    <div class="output-actions">
+                        <button id="scoreLeadBtn" class="btn btn-success">
+                            ✓ Save Scoring
+                        </button>
+                    </div>
                 </div>
             </div>
         </div>
@@ -223,6 +195,25 @@
         document.getElementById('leadForm').addEventListener('submit', scoreLead);
         document.getElementById('logoutBtn').addEventListener('click', logout);
         
+        function switchTab(tabId) {
+            // Update buttons
+            const buttons = document.querySelectorAll('.tab-btn');
+            buttons.forEach(btn => {
+                if (btn.innerText.toLowerCase().includes(tabId.toLowerCase()) || 
+                    (tabId === 'analysis' && btn.innerText.includes('Analysis'))) {
+                    btn.classList.add('active');
+                } else {
+                    btn.classList.remove('active');
+                }
+            });
+
+            // Update content
+            const contents = document.querySelectorAll('.tab-content');
+            contents.forEach(content => {
+                content.style.display = content.id === `${tabId}-tab` ? 'block' : 'none';
+            });
+        }
+
         async function scoreLead(e) {
             e.preventDefault();
             
@@ -237,6 +228,7 @@
             
             document.getElementById('loadingSpinner').style.display = 'flex';
             document.getElementById('leadOutput').style.display = 'none';
+            document.getElementById('placeholderCard').style.display = 'none';
             document.getElementById('formMessage').textContent = '';
             
             try {
@@ -255,15 +247,17 @@
                 if (response.ok) {
                     displayLeadOutput(data.lead_score);
                     currentLeadId = data.lead_id;
-                    await loadLeads();
+                    switchTab('overview');
                 } else {
                     document.getElementById('formMessage').textContent = data.error || 'Error scoring lead';
                     document.getElementById('formMessage').classList.add('error');
+                    document.getElementById('placeholderCard').style.display = 'block';
                 }
             } catch (error) {
                 document.getElementById('loadingSpinner').style.display = 'none';
                 document.getElementById('formMessage').textContent = 'Network error. Please try again.';
                 document.getElementById('formMessage').classList.add('error');
+                document.getElementById('placeholderCard').style.display = 'block';
             }
         }
         
@@ -298,13 +292,7 @@
                 business_need: document.getElementById('business_need').value
             };
             
-            document.getElementById('snapshotIndustry').textContent = formData.industry;
-            document.getElementById('snapshotBudget').textContent = formData.budget;
-            document.getElementById('snapshotUrgency').textContent = formData.urgency.split(' - ')[0];
-            document.getElementById('snapshotAuthority').textContent = formData.authority;
-            document.getElementById('snapshotNeed').textContent = formData.business_need;
-            
-            // Detailed reasoning - executive-level refinement
+            // Detailed reasoning
             const reasoning = leadScore.detailed_reasoning;
             document.getElementById('detailedReasoning').innerHTML = `
                 <div class="reasoning-item">
@@ -381,13 +369,13 @@
             
             // Risk Assessment with color-coded level
             const riskFactors = leadScore.risk_factors || [];
-            let riskLevel = 'Low';
+            let riskLevel = leadScore.risk_level || 'Low';
             let riskColor = '#10b981';
             
-            if (riskFactors.length > 2) {
+            if (riskLevel === 'High' || riskFactors.length > 2) {
                 riskLevel = 'High';
                 riskColor = '#ef4444';
-            } else if (riskFactors.length > 0) {
+            } else if (riskLevel === 'Medium' || riskFactors.length > 0) {
                 riskLevel = 'Medium';
                 riskColor = '#f59e0b';
             }
@@ -421,9 +409,6 @@
                 </div>
             `;
             
-            // Priority recommendation
-            document.getElementById('priorityRec').textContent = leadScore.priority_recommendation;
-            
             // Next actions
             document.getElementById('nextActions').innerHTML = leadScore.next_actions
                 .map(a => `<div class="action-item">→ ${a}</div>`)
@@ -454,38 +439,9 @@
             }
         }
         
-        async function loadLeads() {
-            const token = localStorage.getItem('token');
-            
-            try {
-                const response = await fetch('/api/leads', {
-                    headers: { 'Authorization': `Bearer ${token}` }
-                });
-                
-                if (response.ok) {
-                    const data = await response.json();
-                    const html = data.leads.length > 0
-                        ? data.leads.map((l, i) => `
-                            <div class="lead-item">
-                                <h5>Score: ${l.ai_output.lead_score} - ${l.ai_output.lead_category}</h5>
-                                <p>${l.business_need}</p>
-                                <small>${new Date(l.created_at).toLocaleString()}</small>
-                            </div>
-                        `).join('')
-                        : '<p>No leads scored yet</p>';
-                    
-                    document.getElementById('leadList').innerHTML = html;
-                }
-            } catch (error) {
-                console.error('Error loading leads:', error);
-            }
-        }
-        
         let currentLeadId = null;
         
         document.addEventListener('DOMContentLoaded', () => {
-            loadLeads();
-            
             document.getElementById('scoreLeadBtn').addEventListener('click', () => {
                 alert('Lead scoring saved successfully!');
             });

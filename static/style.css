@@ -21,9 +21,9 @@
     --bg-secondary: #1e293b;
     --bg-tertiary: #334155;
     
-    --text-primary: #f8fafc;
-    --text-secondary: #94a3b8;
-    --text-light: #64748b;
+    --text-primary: #f1f5f9;
+    --text-secondary: #cbd5e1;
+    --text-light: #94a3b8;
     
     --border: rgba(255, 255, 255, 0.1);
     --border-dark: rgba(255, 255, 255, 0.2);
@@ -48,7 +48,8 @@ body {
 
 h1, h2, h3, h4, h5, h6 {
     font-weight: 600;
-    line-height: 1.4;
+    line-height: 1.3;
+    color: var(--text-primary);
 }
 
 h1 {
@@ -62,18 +63,26 @@ h2 {
 }
 
 h3 {
-    font-size: 1.5rem;
+    font-size: 1.6rem;
     margin-bottom: 1rem;
 }
 
 h4 {
-    font-size: 1.125rem;
+    font-size: 1.2rem;
     margin-bottom: 0.75rem;
+    font-weight: 700;
+}
+
+h5 {
+    font-size: 1.05rem;
+    font-weight: 600;
 }
 
 p {
     margin-bottom: 0.75rem;
     color: var(--text-secondary);
+    font-size: 1rem;
+    line-height: 1.7;
 }
 
 a {
@@ -1421,13 +1430,15 @@ textarea:focus {
 .idea-content h5 {
     color: var(--text-primary);
     margin-bottom: 0.5rem;
-    font-size: 1.1rem;
+    font-size: 1.15rem;
+    font-weight: 700;
 }
 
 .idea-content p {
     color: var(--text-secondary);
     margin: 0;
-    line-height: 1.6;
+    line-height: 1.7;
+    font-size: 1rem;
 }
 
 /* ============= CTA ITEMS ============= */
@@ -1471,8 +1482,8 @@ textarea:focus {
     color: white;
     padding: 0.75rem 1.5rem;
     border-radius: 0.5rem;
-    font-weight: 600;
-    font-size: 1rem;
+    font-weight: 700;
+    font-size: 1.05rem;
     display: inline-block;
     margin-bottom: 0.75rem;
 }
@@ -1480,7 +1491,8 @@ textarea:focus {
 .cta-content p {
     color: var(--text-secondary);
     margin: 0;
-    line-height: 1.6;
+    line-height: 1.7;
+    font-size: 1rem;
 }
 
 /* ============= HASHTAG SUGGESTIONS ============= */
@@ -1605,7 +1617,8 @@ textarea:focus {
 .day-content p {
     color: var(--text-secondary);
     margin-bottom: 1rem;
-    line-height: 1.6;
+    line-height: 1.7;
+    font-size: 1rem;
 }
 
 .best-time {
@@ -1647,7 +1660,8 @@ textarea:focus {
     margin-bottom: 0.75rem;
     color: var(--text-secondary);
     border-left: 4px solid var(--primary);
-    line-height: 1.6;
+    line-height: 1.7;
+    font-size: 1rem;
 }
 
 .analysis-list.opportunities li {
@@ -1782,4 +1796,107 @@ textarea:focus {
 .how-it-works ol li {
     margin-bottom: 0.5rem;
     line-height: 1.6;
+}
+
+/* ============= LEAD SCORING UPDATES ============= */
+
+.placeholder-card {
+    background: var(--bg-tertiary);
+    border: 2px dashed var(--border);
+    border-radius: 1.5rem;
+    padding: 4rem 2rem;
+    text-align: center;
+    margin-top: 2rem;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 1.5rem;
+}
+
+.placeholder-icon {
+    font-size: 4rem;
+    opacity: 0.5;
+}
+
+.placeholder-card h3 {
+    color: white;
+    margin: 0;
+}
+
+.placeholder-card p {
+    max-width: 400px;
+    margin: 0;
+}
+
+.placeholder-card .secondary-text {
+    font-size: 0.9rem;
+    opacity: 0.7;
+}
+
+.insights-header {
+    margin-bottom: 2rem;
+    border-bottom: 1px solid var(--border);
+    padding-bottom: 1rem;
+}
+
+.tabs-container {
+    margin-bottom: 2rem;
+}
+
+.tabs-nav {
+    display: flex;
+    gap: 0.5rem;
+    border-bottom: 1px solid var(--border);
+    padding-bottom: 0;
+}
+
+.tab-btn {
+    padding: 1rem 1.5rem;
+    background: transparent;
+    border: none;
+    color: var(--text-secondary);
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s;
+    position: relative;
+    font-size: 0.95rem;
+}
+
+.tab-btn:hover {
+    color: white;
+}
+
+.tab-btn.active {
+    color: var(--primary);
+}
+
+.tab-btn.active::after {
+    content: " \;
+ position: absolute;
+ bottom: -1px;
+ left: 0;
+ width: 100%;
+ height: 3px;
+ background: var(--primary);
+ border-radius: 3px 3px 0 0;
+}
+
+.tab-content {
+ animation: fadeIn 0.4s ease;
+}
+
+@keyframes fadeIn {
+ from { opacity: 0; transform: translateY(10px); }
+ to { opacity: 1; transform: translateY(0); }
+}
+
+.risk-card {
+ background: rgba(239, 68, 68, 0.05);
+ border-color: rgba(239, 68, 68, 0.2);
+}
+
+.output-actions {
+ margin-top: 2rem;
+ display: flex;
+ justify-content: flex-end;
 }
