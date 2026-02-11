@@ -70,10 +70,10 @@
                         <label for="authority">Authority Level *</label>
                         <select id="authority" name="authority" required>
                             <option value="">Select authority...</option>
-                            <option value="Decision maker">Decision maker</option>
-                            <option value="Budget influence">Budget influence</option>
-                            <option value="Influencer">Influencer</option>
-                            <option value="End user">End user</option>
+                            <option value="Primary Decision Maker">Primary Decision Maker</option>
+                            <option value="Budget Approver">Budget Approver</option>
+                            <option value="Technical Influencer">Technical Influencer</option>
+                            <option value="End User">End User</option>
                         </select>
                     </div>
                     
@@ -110,17 +110,47 @@
                 <div id="leadOutput" style="display: none;">
                     <h3>📊 Lead Assessment</h3>
                     
+                    <!-- Overall Lead Qualification Score -->
                     <div class="output-card lead-score-card">
-                        <h4>Lead Score & Category</h4>
+                        <h4>Overall Lead Qualification Score</h4>
                         <div class="score-display-large">
                             <div class="score-circle-large" id="scoreCircle">0</div>
                             <div class="score-label">
-                                <p id="scoreCategory" class="category"></p>
+                                <p id="scoreTierText" class="category-tier"></p>
+                                <p id="scoreIntentText" class="intent-text"></p>
                                 <p id="conversionProb" class="conversion"></p>
                             </div>
                         </div>
                     </div>
                     
+                    <!-- Lead Snapshot Section -->
+                    <div class="output-card lead-snapshot">
+                        <h4>📸 Lead Snapshot</h4>
+                        <div class="snapshot-grid">
+                            <div class="snapshot-item">
+                                <strong>Industry</strong>
+                                <p id="snapshotIndustry">—</p>
+                            </div>
+                            <div class="snapshot-item">
+                                <strong>Budget Range</strong>
+                                <p id="snapshotBudget">—</p>
+                            </div>
+                            <div class="snapshot-item">
+                                <strong>Urgency Level</strong>
+                                <p id="snapshotUrgency">—</p>
+                            </div>
+                            <div class="snapshot-item">
+                                <strong>Authority Level</strong>
+                                <p id="snapshotAuthority">—</p>
+                            </div>
+                        </div>
+                        <div class="snapshot-need">
+                            <strong>Business Need Summary</strong>
+                            <p id="snapshotNeed">—</p>
+                        </div>
+                    </div>
+                    
+                    <!-- Detailed Analysis Section -->
                     <div class="output-card">
                         <h4>🔬 Detailed Analysis</h4>
                         <div id="detailedReasoning" class="reasoning-section"></div>
@@ -131,28 +161,37 @@
                         <div id="scoreBreakdown" class="score-breakdown"></div>
                     </div>
                     
+                    <!-- Risk Factors with Color-Coded Level -->
                     <div class="output-card">
-                        <h4>⚠️ Risk Factors</h4>
+                        <h4>⚠️ Risk Assessment</h4>
+                        <div class="risk-level-container">
+                            <p><strong>Risk Level:</strong> <span id="riskLevel" class="risk-badge"></span></p>
+                        </div>
                         <div id="riskFactors" class="risk-list"></div>
                     </div>
                     
+                    <!-- Sales Strategy Section -->
+                    <div class="output-card sales-strategy">
+                        <h4>🎯 Recommended Sales Strategy</h4>
+                        <div id="salesStrategy" class="strategy-content"></div>
+                    </div>
+                    
                     <div class="output-card">
-                        <h4>🎯 Priority Recommendation</h4>
+                        <h4>� Priority Recommendation</h4>
                         <p id="priorityRec" class="priority-rec"></p>
                     </div>
                     
                     <!-- Explainability Section -->
                     <div class="output-card explainability">
-                        <h4>🔍 Why AI Scored This:</h4>
-                        <p>AI Analysis is based on:</p>
+                        <h4>🔍 Scoring Factors Considered:</h4>
                         <ul>
-                            <li>Budget alignment with typical industry spend</li>
-                            <li>Business need clarity and specificity</li>
-                            <li>Urgency signals indicating timeline</li>
-                            <li>Decision authority level</li>
-                            <li>Industry-specific conversion patterns</li>
+                            <li>Budget capacity relative to industry benchmarks</li>
+                            <li>Business need definition and clarity</li>
+                            <li>Timeline and procurement urgency signals</li>
+                            <li>Decision-making authority and influence level</li>
+                            <li>Industry-specific conversion and fit patterns</li>
                         </ul>
-                        <p class="disclaimer">⚠️ This is an AI-assisted estimate. Human sales judgment remains critical.</p>
+                        <p class="disclaimer">⚠️ AI-assisted qualification. Human sales judgment remains essential for final assessment.</p>
                     </div>
                     
                     <!-- Recommended Actions -->
@@ -233,35 +272,59 @@
             const category = leadScore.lead_category;
             const convProb = leadScore.conversion_probability;
             
-            // Score circle
+            // Score circle with color coding
             document.getElementById('scoreCircle').textContent = score;
             const color = category === 'Hot' ? '#10b981' : category === 'Warm' ? '#f59e0b' : '#ef4444';
             document.getElementById('scoreCircle').style.borderColor = color;
             
-            document.getElementById('scoreCategory').textContent = `${category} Lead`;
-            document.getElementById('conversionProb').textContent = `${convProb}% conversion probability`;
+            // Enhanced tier display
+            const tierMap = {
+                'Hot': { tier: 'A', intent: 'High buying intent. Immediate prioritization recommended.' },
+                'Warm': { tier: 'B', intent: 'Moderate interest with positive indicators. Follow up within 48 hours.' },
+                'Cold': { tier: 'C', intent: 'Limited immediate interest. Nurture for future opportunity.' }
+            };
             
-            // Detailed reasoning
+            const tierInfo = tierMap[category] || tierMap['Warm'];
+            document.getElementById('scoreTierText').innerHTML = `🔥 ${category} Lead (Tier ${tierInfo.tier})`;
+            document.getElementById('scoreIntentText').textContent = tierInfo.intent;
+            document.getElementById('conversionProb').textContent = `${convProb}% estimated conversion probability`;
+            
+            // Populate Lead Snapshot
+            const formData = {
+                industry: document.getElementById('industry').value,
+                budget: document.getElementById('budget').value,
+                urgency: document.getElementById('urgency').value,
+                authority: document.getElementById('authority').value,
+                business_need: document.getElementById('business_need').value
+            };
+            
+            document.getElementById('snapshotIndustry').textContent = formData.industry;
+            document.getElementById('snapshotBudget').textContent = formData.budget;
+            document.getElementById('snapshotUrgency').textContent = formData.urgency.split(' - ')[0];
+            document.getElementById('snapshotAuthority').textContent = formData.authority;
+            document.getElementById('snapshotNeed').textContent = formData.business_need;
+            
+            // Detailed reasoning - executive-level refinement
             const reasoning = leadScore.detailed_reasoning;
             document.getElementById('detailedReasoning').innerHTML = `
                 <div class="reasoning-item">
-                    <strong>Budget Analysis:</strong>
+                    <strong>Budget Analysis</strong>
                     <p>${reasoning.budget_analysis}</p>
                 </div>
                 <div class="reasoning-item">
-                    <strong>Need Alignment:</strong>
+                    <strong>Need Alignment</strong>
                     <p>${reasoning.need_alignment}</p>
                 </div>
                 <div class="reasoning-item">
-                    <strong>Urgency Signal:</strong>
+                    <strong>Urgency Signal</strong>
                     <p>${reasoning.urgency_signal}</p>
                 </div>
                 <div class="reasoning-item">
-                    <strong>Authority Assessment:</strong>
+                    <strong>Authority Assessment</strong>
                     <p>${reasoning.authority_assessment}</p>
                 </div>
                 <div class="reasoning-item">
-                    <strong>Industry Context:</strong>
+                    <strong>Industry Context</strong>
                     <p>${reasoning.industry_context}</p>
                 </div>
             `;
@@ -316,10 +379,47 @@
                 </div>
             `;
             
-            // Risk factors
-            document.getElementById('riskFactors').innerHTML = leadScore.risk_factors.length > 0
-                ? leadScore.risk_factors.map(r => `<div class="risk-item">⚠️ ${r}</div>`).join('')
-                : '<p>No identified risk factors</p>';
+            // Risk Assessment with color-coded level
+            const riskFactors = leadScore.risk_factors || [];
+            let riskLevel = 'Low';
+            let riskColor = '#10b981';
+            
+            if (riskFactors.length > 2) {
+                riskLevel = 'High';
+                riskColor = '#ef4444';
+            } else if (riskFactors.length > 0) {
+                riskLevel = 'Medium';
+                riskColor = '#f59e0b';
+            }
+            
+            const riskBadge = document.getElementById('riskLevel');
+            riskBadge.textContent = riskLevel;
+            riskBadge.style.backgroundColor = riskColor;
+            riskBadge.style.color = '#fff';
+            riskBadge.style.padding = '4px 12px';
+            riskBadge.style.borderRadius = '4px';
+            riskBadge.style.fontWeight = 'bold';
+            
+            document.getElementById('riskFactors').innerHTML = riskFactors.length > 0
+                ? `<div class="risk-concerns"><strong>Primary Concerns:</strong><ul>${riskFactors.map(r => `<li>${r}</li>`).join('')}</ul></div>`
+                : '<p class="low-risk">✓ No significant risk factors identified</p>';
+            
+            // Sales Strategy Section
+            const salesApproach = determineSalesApproach(category, formData.authority, formData.budget);
+            document.getElementById('salesStrategy').innerHTML = `
+                <div class="strategy-item">
+                    <strong>Recommended Approach:</strong>
+                    <p>${salesApproach.approach}</p>
+                </div>
+                <div class="strategy-item">
+                    <strong>Key Messaging Angle:</strong>
+                    <p>${salesApproach.messaging}</p>
+                </div>
+                <div class="strategy-item">
+                    <strong>Engagement Recommendation:</strong>
+                    <p>${salesApproach.engagement}</p>
+                </div>
+            `;
             
             // Priority recommendation
             document.getElementById('priorityRec').textContent = leadScore.priority_recommendation;
@@ -330,6 +430,28 @@
                 .join('');
             
             document.getElementById('leadOutput').style.display = 'block';
+        }
+        
+        function determineSalesApproach(category, authority, budget) {
+            if (category === 'Hot') {
+                return {
+                    approach: 'Consultative / Executive-focused',
+                    messaging: authority === 'Primary Decision Maker' ? 'ROI and strategic impact metrics' : 'Operational efficiency and peer validation',
+                    engagement: 'Schedule executive-level demo within 24 hours'
+                };
+            } else if (category === 'Warm') {
+                return {
+                    approach: 'Value-driven / Needs assessment',
+                    messaging: 'Business case development and competitive differentiation',
+                    engagement: 'Conduct discovery call to refine business case within 3 days'
+                };
+            } else {
+                return {
+                    approach: 'Nurture / Content-driven',
+                    messaging: 'Industry insights and thought leadership resources',
+                    engagement: 'Add to nurture sequence; revisit quarterly or upon trigger events'
+                };
+            }
         }
         
         async function loadLeads() {

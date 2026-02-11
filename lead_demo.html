@@ -1,0 +1,276 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Lead Scoring Demo - MarketAI Suite</title>
+    <link rel="stylesheet" href="static/style.css">
+    <style>
+        .demo-notice {
+            background: rgba(59, 130, 246, 0.1);
+            border-left: 4px solid #3b82f6;
+            padding: 1rem;
+            margin-bottom: 1rem;
+            border-radius: 0.5rem;
+            color: #93c5fd;
+        }
+    </style>
+</head>
+<body>
+    <nav class="navbar">
+        <div class="nav-brand">
+            <h1><span class="logo-icon"></span> MarketAI Suite</h1>
+        </div>
+        <div class="nav-menu">
+            <a href="#" class="nav-link">Home</a>
+            <a href="#" class="nav-link">Campaigns</a>
+            <a href="#" class="nav-link">Pitches</a>
+            <a href="#" class="nav-link active">Leads</a>
+        </div>
+    </nav>
+    
+    <main class="container">
+        <div class="page-header">
+            <h2>⭐ Lead Scoring System</h2>
+            <p>Intelligent lead qualification with detailed reasoning</p>
+        </div>
+        
+        <div class="content-grid">
+            <!-- Input Form -->
+            <div class="form-section">
+                <h3>Lead Profile</h3>
+                <div class="demo-notice">
+                    <strong>Demo Mode:</strong> This shows the refined Lead Scoring interface with sample data populated.
+                </div>
+                <form class="form-group">
+                    <div>
+                        <label for="budget">Budget *</label>
+                        <select id="budget" disabled>
+                            <option selected>$150K - $500K</option>
+                        </select>
+                    </div>
+                    
+                    <div>
+                        <label for="business_need">Business Need *</label>
+                        <input 
+                            type="text" 
+                            id="business_need" 
+                            value="Marketing automation and customer data platform"
+                            disabled
+                        >
+                    </div>
+                    
+                    <div>
+                        <label for="urgency">Urgency *</label>
+                        <select id="urgency" disabled>
+                            <option selected>High - Need immediately</option>
+                        </select>
+                    </div>
+                    
+                    <div>
+                        <label for="authority">Authority Level *</label>
+                        <select id="authority" disabled>
+                            <option selected>Primary Decision Maker</option>
+                        </select>
+                    </div>
+                    
+                    <div>
+                        <label for="industry">Industry *</label>
+                        <select id="industry" disabled>
+                            <option selected>SaaS</option>
+                        </select>
+                    </div>
+                </form>
+            </div>
+            
+            <!-- Output Results -->
+            <div class="results-section">
+                <h3>📊 Lead Assessment</h3>
+                
+                <!-- Overall Lead Qualification Score -->
+                <div class="output-card lead-score-card">
+                    <h4>Overall Lead Qualification Score</h4>
+                    <div class="score-display-large">
+                        <div class="score-circle-large" style="border-color: #10b981;">82</div>
+                        <div class="score-label">
+                            <p class="category-tier">🔥 Hot Lead (Tier A)</p>
+                            <p class="intent-text">High buying intent. Immediate prioritization recommended.</p>
+                            <p class="conversion" style="margin-top: 0.5rem;">78% estimated conversion probability</p>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Lead Snapshot Section -->
+                <div class="output-card lead-snapshot">
+                    <h4>📸 Lead Snapshot</h4>
+                    <div class="snapshot-grid">
+                        <div class="snapshot-item">
+                            <strong>Industry</strong>
+                            <p>SaaS</p>
+                        </div>
+                        <div class="snapshot-item">
+                            <strong>Budget Range</strong>
+                            <p>$150K - $500K</p>
+                        </div>
+                        <div class="snapshot-item">
+                            <strong>Urgency Level</strong>
+                            <p>High</p>
+                        </div>
+                        <div class="snapshot-item">
+                            <strong>Authority Level</strong>
+                            <p>Primary Decision Maker</p>
+                        </div>
+                    </div>
+                    <div class="snapshot-need">
+                        <strong>Business Need Summary</strong>
+                        <p>Marketing automation and customer data platform to consolidate customer insights and improve campaign ROI</p>
+                    </div>
+                </div>
+                
+                <!-- Detailed Analysis Section -->
+                <div class="output-card">
+                    <h4>🔬 Detailed Analysis</h4>
+                    <div class="reasoning-section">
+                        <div class="reasoning-item">
+                            <strong>Budget Analysis</strong>
+                            <p>Budget range indicates strong investment capacity. $150K-$500K confirms organizational commitment to enterprise-grade solutions with sustainable ROI expectations.</p>
+                        </div>
+                        <div class="reasoning-item">
+                            <strong>Need Alignment</strong>
+                            <p>Clear, specific business need (marketing automation + CDP) demonstrates mature understanding of solution requirements. Strong product-market fit indicators present.</p>
+                        </div>
+                        <div class="reasoning-item">
+                            <strong>Urgency Signal</strong>
+                            <p>Immediate need suggests active procurement cycle and time-sensitive decision window. High probability of accelerated sales process.</p>
+                        </div>
+                        <div class="reasoning-item">
+                            <strong>Authority Assessment</strong>
+                            <p>Primary Decision Maker status eliminates sales delays and reduces deal complexity. Direct path to final contract negotiation.</p>
+                        </div>
+                        <div class="reasoning-item">
+                            <strong>Industry Context</strong>
+                            <p>SaaS segment shows 42% higher conversion rates for marketing automation solutions. Company structure supports rapid implementation timeline.</p>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="output-card">
+                    <h4>📈 Score Breakdown</h4>
+                    <div class="score-breakdown">
+                        <div class="breakdown-row">
+                            <div class="breakdown-item-grid">
+                                <label>Budget Fit: 92/100</label>
+                                <div class="progress-bar">
+                                    <div class="progress-fill" style="width: 92%"></div>
+                                </div>
+                                <small>Mid-market budget aligns perfectly with enterprise solution pricing</small>
+                            </div>
+                        </div>
+                        <div class="breakdown-row">
+                            <div class="breakdown-item-grid">
+                                <label>Need Clarity: 88/100</label>
+                                <div class="progress-bar">
+                                    <div class="progress-fill" style="width: 88%"></div>
+                                </div>
+                                <small>Clearly articulated business goal with specific solution keywords</small>
+                            </div>
+                        </div>
+                        <div class="breakdown-row">
+                            <div class="breakdown-item-grid">
+                                <label>Urgency Level: 95/100</label>
+                                <div class="progress-bar">
+                                    <div class="progress-fill" style="width: 95%"></div>
+                                </div>
+                                <small>Immediate timeline indicates active buying process</small>
+                            </div>
+                        </div>
+                        <div class="breakdown-row">
+                            <div class="breakdown-item-grid">
+                                <label>Authority Level: 90/100</label>
+                                <div class="progress-bar">
+                                    <div class="progress-fill" style="width: 90%"></div>
+                                </div>
+                                <small>Primary Decision Maker eliminates approval bottlenecks</small>
+                            </div>
+                        </div>
+                        <div class="breakdown-row">
+                            <div class="breakdown-item-grid">
+                                <label>Industry Fit: 75/100</label>
+                                <div class="progress-bar">
+                                    <div class="progress-fill" style="width: 75%"></div>
+                                </div>
+                                <small>SaaS industry strong product-market fit but competitive landscape</small>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Risk Factors with Color-Coded Level -->
+                <div class="output-card">
+                    <h4>⚠️ Risk Assessment</h4>
+                    <div class="risk-level-container">
+                        <p><strong>Risk Level:</strong> <span class="risk-badge" style="background-color: #f59e0b;">Medium</span></p>
+                    </div>
+                    <div class="risk-concerns">
+                        <strong>Primary Concerns:</strong>
+                        <ul>
+                            <li>Competitive alternatives from established vendors (HubSpot, Marketo)</li>
+                            <li>Multi-stakeholder approval process despite decision maker involvement</li>
+                        </ul>
+                    </div>
+                </div>
+                
+                <!-- Sales Strategy Section -->
+                <div class="output-card sales-strategy">
+                    <h4>🎯 Recommended Sales Strategy</h4>
+                    <div class="strategy-content">
+                        <div class="strategy-item">
+                            <strong>Recommended Approach:</strong>
+                            <p>Consultative / Executive-focused approach with ROI-driven messaging</p>
+                        </div>
+                        <div class="strategy-item">
+                            <strong>Key Messaging Angle:</strong>
+                            <p>ROI and strategic impact metrics, emphasizing customer lifetime value increase and operational revenue attribution</p>
+                        </div>
+                        <div class="strategy-item">
+                            <strong>Engagement Recommendation:</strong>
+                            <p>Schedule executive-level demo within 24 hours covering competitive differentiation and customer success stories</p>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="output-card">
+                    <h4>📌 Priority Recommendation</h4>
+                    <p class="priority-rec">PRIORITY: A-Tier. Contact today. This is a high-value opportunity with immediate action items and low sales friction. Focus on executive engagement and rapid solution demo.</p>
+                </div>
+                
+                <!-- Explainability Section -->
+                <div class="output-card explainability">
+                    <h4>🔍 Scoring Factors Considered:</h4>
+                    <ul>
+                        <li>Budget capacity relative to industry benchmarks</li>
+                        <li>Business need definition and clarity</li>
+                        <li>Timeline and procurement urgency signals</li>
+                        <li>Decision-making authority and influence level</li>
+                        <li>Industry-specific conversion and fit patterns</li>
+                    </ul>
+                    <p class="disclaimer">⚠️ AI-assisted qualification. Human sales judgment remains essential for final assessment.</p>
+                </div>
+                
+                <!-- Recommended Actions -->
+                <div class="output-card recommended-actions">
+                    <h4>📌 Recommended Next Actions:</h4>
+                    <div class="action-item">→ Schedule executive demo within 24 hours</div>
+                    <div class="action-item">→ Prepare ROI case study specific to SaaS marketing operations</div>
+                    <div class="action-item">→ Identify secondary stakeholders (Marketing Ops, RevOps)</div>
+                    <div class="action-item">→ Prepare competitive positioning deck vs HubSpot/Marketo</div>
+                </div>
+            </div>
+        </div>
+    </main>
+    
+    <footer class="footer">
+        <p>&copy; 2026 MarketAI Suite - Explainable AI for Business Intelligence</p>
+    </footer>
+</body>
+</html>

@@ -859,6 +859,66 @@ textarea:focus {
     font-size: 0.95rem;
 }
 
+/* ============= LEAD SNAPSHOT ============= */
+
+.lead-snapshot {
+    background: linear-gradient(135deg, rgba(99, 102, 241, 0.05), rgba(16, 185, 129, 0.05));
+    border-left: 4px solid var(--primary);
+}
+
+.snapshot-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+    gap: 1.5rem;
+    margin-bottom: 1.5rem;
+}
+
+.snapshot-item {
+    background: var(--bg-tertiary);
+    padding: 1rem;
+    border-radius: 0.5rem;
+    border: 1px solid var(--border);
+    text-align: center;
+}
+
+.snapshot-item strong {
+    display: block;
+    color: var(--text-primary);
+    font-size: 0.85rem;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    margin-bottom: 0.5rem;
+    color: var(--text-light);
+}
+
+.snapshot-item p {
+    font-size: 1rem;
+    font-weight: 600;
+    color: var(--primary);
+    margin: 0;
+}
+
+.snapshot-need {
+    background: var(--bg-tertiary);
+    padding: 1rem;
+    border-radius: 0.5rem;
+    border: 1px solid var(--border);
+}
+
+.snapshot-need strong {
+    display: block;
+    font-size: 0.85rem;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    color: var(--text-light);
+    margin-bottom: 0.5rem;
+}
+
+.snapshot-need p {
+    margin: 0;
+    color: var(--text-secondary);
+}
+
 /* ============= RISK FACTORS ============= */
 
 .risk-list {
@@ -873,6 +933,113 @@ textarea:focus {
     padding: 0.75rem 1rem;
     border-radius: 0.5rem;
     color: #fca5a5;
+}
+
+.risk-level-container {
+    margin-bottom: 1rem;
+    padding-bottom: 1rem;
+    border-bottom: 1px solid var(--border);
+}
+
+.risk-level-container p {
+    margin-bottom: 0;
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+}
+
+.risk-badge {
+    font-weight: bold;
+    padding: 4px 12px;
+    border-radius: 4px;
+    font-size: 0.9rem;
+}
+
+.low-risk {
+    color: var(--success) !important;
+}
+
+.risk-concerns {
+    background: rgba(239, 68, 68, 0.05);
+    border: 1px solid rgba(239, 68, 68, 0.2);
+    padding: 1rem;
+    border-radius: 0.5rem;
+}
+
+.risk-concerns strong {
+    display: block;
+    color: var(--text-primary);
+    margin-bottom: 0.5rem;
+}
+
+.risk-concerns ul {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+}
+
+.risk-concerns li {
+    padding: 0.5rem 0;
+    padding-left: 1.5rem;
+    position: relative;
+    color: var(--text-secondary);
+}
+
+.risk-concerns li:before {
+    content: "•";
+    position: absolute;
+    left: 0;
+    color: var(--danger);
+    font-weight: bold;
+}
+
+/* ============= SALES STRATEGY ============= */
+
+.sales-strategy {
+    background: linear-gradient(135deg, rgba(16, 185, 129, 0.05), rgba(59, 130, 246, 0.05));
+    border-left: 4px solid var(--secondary);
+}
+
+.strategy-content {
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+}
+
+.strategy-item {
+    background: var(--bg-tertiary);
+    padding: 1.25rem;
+    border-radius: 0.5rem;
+    border: 1px solid var(--border);
+    border-left: 3px solid var(--secondary);
+}
+
+.strategy-item strong {
+    display: block;
+    color: var(--text-primary);
+    margin-bottom: 0.5rem;
+    font-weight: 700;
+}
+
+.strategy-item p {
+    margin: 0;
+    color: var(--text-secondary);
+    font-size: 0.95rem;
+}
+
+/* ============= SCORE CATEGORY DISPLAY ============= */
+
+.category-tier {
+    font-size: 1.3rem;
+    font-weight: 700;
+    color: var(--text-primary);
+    margin-bottom: 0.5rem !important;
+}
+
+.intent-text {
+    color: var(--text-secondary);
+    font-size: 0.95rem;
+    margin-bottom: 0 !important;
 }
 
 /* ============= PRIORITY RECOMMENDATION ============= */
