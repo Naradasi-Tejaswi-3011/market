@@ -15,9 +15,9 @@ try:
     
     # Verify connection
     client.admin.command('ping')
-    print("✓ MongoDB connected successfully")
+    print("[SUCCESS] MongoDB connected successfully")
 except Exception as e:
-    print(f"✗ MongoDB connection failed: {e}")
+    print(f"[ERROR] MongoDB connection failed: {e}")
     db = None
 
 
@@ -55,9 +55,9 @@ def init_db():
             db.create_collection('activity_logs')
         db.activity_logs.create_index([('user_id', 1), ('created_at', -1)])
         
-        print("✓ Database collections initialized")
+        print("[SUCCESS] Database collections initialized")
     except Exception as e:
-        print(f"✗ Database initialization error: {e}")
+        print(f"[ERROR] Database initialization error: {e}")
 
 
 def get_db():
@@ -69,4 +69,4 @@ def close_db():
     """Close database connection"""
     if client:
         client.close()
-        print("✓ MongoDB connection closed")
+        print("[SUCCESS] MongoDB connection closed")
