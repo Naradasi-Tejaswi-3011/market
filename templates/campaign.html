@@ -144,7 +144,10 @@
                 </div>
                 
                 <div id="campaignOutput" style="display: none;">
-                    <h3>Generated Campaign for <span id="platformName"></span></h3>
+                    <div style="position: relative; margin-bottom: 1rem;">
+                        <h3>Generated Campaign for <span id="platformName"></span></h3>
+                        <button type="button" class="modal-close" onclick="window.closeCampaignOutput()" title="Close" style="position: absolute; right: 1.5rem; top: 0;">&times;</button>
+                    </div>
                     
                     <!-- Tab Navigation -->
                     <div class="tab-navigation">
@@ -353,6 +356,12 @@
         }
         
         let currentCampaignId = null;
+
+        window.closeCampaignOutput = function() {
+            document.getElementById('campaignOutput').style.display = 'none';
+            document.getElementById('toolDescription').style.display = 'block';
+            document.getElementById('campaignForm').reset();
+        }
         
         document.addEventListener('DOMContentLoaded', () => {
             loadCampaigns();

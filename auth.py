@@ -20,6 +20,8 @@ def verify_password(password, password_hash):
 def register_user(email, password):
     """Register new user"""
     db = get_db()
+    if db is None:
+        return {'error': 'Database connection failed. Please check your MONGODB_URI.'}, 503
     
     # Check if user exists
     existing_user = db.users.find_one({'email': email})
@@ -42,6 +44,8 @@ def register_user(email, password):
 def login_user(email, password):
     """Authenticate user and return JWT token"""
     db = get_db()
+    if db is None:
+        return {'error': 'Database connection failed. Please check your MONGODB_URI.'}, 503
     
     # Find user
     user = db.users.find_one({'email': email})
@@ -69,6 +73,8 @@ def login_user(email, password):
 def get_current_user():
     """Get current authenticated user"""
     db = get_db()
+    if db is None:
+        return None
     user_id = get_jwt_identity()
     
     from bson.objectid import ObjectId

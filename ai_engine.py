@@ -325,8 +325,8 @@ def _intelligent_lead_score_fallback(budget, business_need, urgency, authority, 
     industry_score = _calculate_industry_score(industry)
     
     # Weighted BANT calculation
-    lead_score = int((budget_score * 0.25 + urgency_score * 0.25 + authority_score * 0.25 + need_score * 0.25) * 0.9)
-    conversion_prob = int(lead_score * 0.85)
+    lead_score = int((budget_score * 0.3 + urgency_score * 0.3 + authority_score * 0.2 + need_score * 0.2))
+    conversion_prob = int(lead_score * 0.9)
     
     # Determine category
     if lead_score >= 70:
@@ -374,33 +374,33 @@ def _intelligent_lead_score_fallback(budget, business_need, urgency, authority, 
 def _calculate_budget_score(budget):
     """Score budget from 0-100"""
     budget_lower = budget.lower()
-    if 'under $50k' in budget_lower:
-        return 40
-    elif '$50k - $150k' in budget_lower:
-        return 65
-    elif '$150k - $500k' in budget_lower:
-        return 85
+    if 'over $1m' in budget_lower:
+        return 100
     elif '$500k - $1m' in budget_lower:
         return 95
-    elif 'over $1m' in budget_lower:
-        return 100
+    elif '$150k - $500k' in budget_lower:
+        return 85
+    elif '$50k - $150k' in budget_lower:
+        return 70
+    elif 'under $50k' in budget_lower:
+        return 50
     else:
-        return 30  # Unknown
+        return 40  # Unknown
 
 
 def _calculate_urgency_score(urgency):
     """Score urgency/timeline from 0-100"""
     urgency_lower = urgency.lower()
     if 'immediately' in urgency_lower or 'high' in urgency_lower:
-        return 95
+        return 100
     elif '3 months' in urgency_lower or 'medium' in urgency_lower:
-        return 70
+        return 80
     elif '6+ months' in urgency_lower or 'low' in urgency_lower:
-        return 40
-    elif 'exploring' in urgency_lower:
-        return 25
-    else:
         return 50
+    elif 'exploring' in urgency_lower:
+        return 40
+    else:
+        return 60
 
 
 def _calculate_authority_score(authority):
@@ -409,13 +409,13 @@ def _calculate_authority_score(authority):
     if 'primary decision maker' in auth_lower:
         return 100
     elif 'budget approver' in auth_lower:
-        return 85
+        return 90
     elif 'technical influencer' in auth_lower or 'influencer' in auth_lower:
-        return 60
+        return 70
     elif 'end user' in auth_lower:
-        return 40
-    else:
         return 50
+    else:
+        return 60
 
 
 def _calculate_need_score(business_need):

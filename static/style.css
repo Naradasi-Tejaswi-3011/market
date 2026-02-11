@@ -2017,6 +2017,7 @@ textarea:focus {
 .modal-header h3 {
     margin: 0;
     color: #f1f5f9;
+    padding-right: 40px; /* Make room for absolute close button */
 }
 
 .modal-close {
@@ -2032,6 +2033,13 @@ textarea:focus {
     display: flex;
     align-items: center;
     justify-content: center;
+    position: absolute;
+    right: 1.5rem;
+    top: 50%;
+    transform: translateY(-50%);
+    z-index: 9999;
+    pointer-events: auto !important;
+    line-height: 1;
 }
 
 .modal-close:hover {

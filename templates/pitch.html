@@ -143,10 +143,15 @@
                 </div>
 
                 <div id="pitchOutput" style="display: none;">
-                    <div class="output-card">
+                    <div class="output-card" style="position: relative;">
+                        <button type="button" class="modal-close" onclick="window.closePitchOutput()" title="Close" style="position: absolute; right: 1.5rem; top: 1.5rem;">&times;</button>
                         <div class="pitch-header">
-                            <h3 id="resultProductName">Product Name</h3>
-                            <span id="resultDate" class="date-badge"></span>
+                            <div style="display: flex; justify-content: space-between; align-items: start; width: 100%;">
+                                <div>
+                                    <h3 id="resultProductName">Product Name</h3>
+                                    <span id="resultDate" class="date-badge"></span>
+                                </div>
+                            </div>
                             <div class="tags">
                                 <span id="resultIndustry" class="tag tag-blue">Industry</span>
                                 <span id="resultCustomerType" class="tag tag-purple">Customer</span>
@@ -279,6 +284,12 @@
         }
 
         let currentPitchId = null;
+
+        window.closePitchOutput = function() {
+            document.getElementById('pitchOutput').style.display = 'none';
+            document.getElementById('toolDescription').style.display = 'block';
+            document.getElementById('pitchForm').reset();
+        }
 
         document.addEventListener('DOMContentLoaded', () => {
             document.getElementById('savePitchBtn').addEventListener('click', () => {
