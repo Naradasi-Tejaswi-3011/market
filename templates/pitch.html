@@ -40,17 +40,20 @@
 
                     <div>
                         <label for="industry">Industry *</label>
-                        <input type="text" id="industry" name="industry" placeholder="e.g., EdTech, Healthcare" required>
+                        <input type="text" id="industry" name="industry" placeholder="e.g., EdTech, Healthcare"
+                            required>
                     </div>
 
                     <div>
                         <label for="description">Product Description *</label>
-                        <textarea id="description" name="description" placeholder="Describe your product and its key features" rows="4" required></textarea>
+                        <textarea id="description" name="description"
+                            placeholder="Describe your product and its key features" rows="4" required></textarea>
                     </div>
 
                     <div>
                         <label for="persona">Customer Persona *</label>
-                        <input type="text" id="persona" name="persona" placeholder="e.g., CTO of mid-sized tech company" required>
+                        <input type="text" id="persona" name="persona" placeholder="e.g., CTO of mid-sized tech company"
+                            required>
                     </div>
 
                     <div class="form-row">
@@ -79,6 +82,15 @@
                         </div>
                     </div>
 
+                    <div>
+                        <label for="language">OUTPUT LANGUAGE *</label>
+                        <select id="language" name="language" required>
+                            <option value="English">English</option>
+                            <option value="Hindi">Hindi</option>
+                            <option value="Telugu">Telugu</option>
+                        </select>
+                    </div>
+
                     <button type="submit" class="btn btn-primary btn-block">
                         Generate Pitch
                     </button>
@@ -92,7 +104,7 @@
                 <div id="toolDescription" class="tool-description">
                     <h3>AI Pitch Generator</h3>
                     <p>Generate personalized sales pitches powered by AI instantly.</p>
-                    
+
                     <div class="feature-list">
                         <div class="feature-item">
                             <span class="feature-icon">💬</span>
@@ -123,7 +135,7 @@
                             </div>
                         </div>
                     </div>
-                    
+
                     <div class="how-it-works">
                         <h4>How It Works</h4>
                         <ol>
@@ -195,9 +207,20 @@
                         </div>
                     </div>
 
-                    <button id="savePitchBtn" class="btn btn-success" style="margin-top: 20px; width: 100%;">
-                        ✓ Save Pitch
-                    </button>
+                    <!-- Feedback Section -->
+                    <div id="feedbackSection" class="feedback-section" style="display: none;">
+                        <h4>Was this sales pitch helpful?</h4>
+                        <div class="feedback-buttons">
+                            <button class="feedback-btn" id="feedbackUp" onclick="handleFeedback(true)">
+                                👍 <span>Yes</span>
+                            </button>
+                            <button class="feedback-btn" id="feedbackDown" onclick="handleFeedback(false)">
+                                👎 <span>No</span>
+                            </button>
+                        </div>
+                        <div id="feedbackMsg" class="feedback-message">Thank you for your feedback!</div>
+                    </div>
+
                 </div>
             </div>
         </div>
@@ -207,8 +230,36 @@
         <p>&copy; 2026 MarketAI Suite - Explainable AI for Business Intelligence</p>
     </footer>
 
+    <!-- Feedback Modal -->
+    <div id="feedbackModalOverlay" class="modal-overlay">
+        <div class="feedback-modal">
+            <div class="modal-header">
+                <h3>Share feedback</h3>
+                <button class="close-modal" onclick="closeFeedbackModal()">&times;</button>
+            </div>
+            <div class="reason-chips" id="reasonChips">
+                <button class="reason-chip" onclick="toggleReason(this)">Incorrect or incomplete</button>
+                <button class="reason-chip" onclick="toggleReason(this)">Not what I asked for</button>
+                <button class="reason-chip" onclick="toggleReason(this)">Slow or buggy</button>
+                <button class="reason-chip" onclick="toggleReason(this)">Style or tone</button>
+                <button class="reason-chip" onclick="toggleReason(this)">Safety or legal concern</button>
+                <button class="reason-chip" onclick="toggleReason(this)">Other</button>
+            </div>
+            <textarea id="feedbackDetails" class="feedback-details" placeholder="Share details (optional)"></textarea>
+            <div class="modal-disclaimer">
+                Your conversation will be included with your feedback to help improve MarketAI. <a href="#">Learn
+                    more</a>
+            </div>
+            <div class="modal-footer">
+                <button id="submitDetailedFeedback" class="btn-submit-feedback" onclick="submitDetailedFeedback()"
+                    disabled>Submit</button>
+            </div>
+        </div>
+    </div>
+
     <script src="{{ url_for('static', filename='app.js') }}"></script>
     <script>
+        let currentPitchId = null;
         document.addEventListener('DOMContentLoaded', checkAuth);
         document.getElementById('pitchForm').addEventListener('submit', generatePitch);
         document.getElementById('logoutBtn').addEventListener('click', logout);
@@ -229,6 +280,7 @@
 
             document.getElementById('loadingSpinner').style.display = 'flex';
             document.getElementById('pitchOutput').style.display = 'none';
+            document.getElementById('toolDescription').style.display = 'none';
             document.getElementById('formMessage').textContent = '';
 
             try {
@@ -281,9 +333,168 @@
             document.getElementById('personalizedCTA').textContent = pitch.personalized_cta;
 
             document.getElementById('pitchOutput').style.display = 'block';
+
+            // Show feedback section and reset buttons
+            document.getElementById('feedbackSection').style.display = 'block';
+            document.getElementById('feedbackMsg').style.display = 'none';
+            document.getElementById('feedbackUp').classList.remove('active-up');
+            document.getElementById('feedbackDown').classList.remove('active-down');
+            document.getElementById('feedbackUp').disabled = false;
+            document.getElementById('feedbackDown').disabled = false;
         }
 
-        let currentPitchId = null;
+        async function handleFeedback(isPositive) {
+            if (!currentPitchId) return;
+
+            if (isPositive) {
+                await submitFeedback(true);
+                document.getElementById('feedbackMsg').style.display = 'block';
+                document.getElementById('feedbackUp').classList.add('active-up');
+                document.getElementById('feedbackDown').classList.remove('active-down');
+                document.getElementById('feedbackUp').disabled = true;
+                document.getElementById('feedbackDown').disabled = true;
+            } else {
+                openFeedbackModal();
+            }
+        }
+
+        function openFeedbackModal() {
+            document.getElementById('feedbackModalOverlay').classList.add('active');
+            const chips = document.querySelectorAll('.reason-chip');
+            chips.forEach(c => c.classList.remove('selected'));
+            document.getElementById('feedbackDetails').value = '';
+            updateSubmitButtonState();
+        }
+
+        function closeFeedbackModal() {
+            document.getElementById('feedbackModalOverlay').classList.remove('active');
+        }
+
+        function toggleReason(btn) {
+            btn.classList.toggle('selected');
+            updateSubmitButtonState();
+        }
+
+        function updateSubmitButtonState() {
+            const selectedChips = document.querySelectorAll('.reason-chip.selected');
+            const submitBtn = document.getElementById('submitDetailedFeedback');
+            if (selectedChips.length > 0) {
+                submitBtn.disabled = false;
+                submitBtn.classList.add('ready');
+            } else {
+                submitBtn.disabled = true;
+                submitBtn.classList.remove('ready');
+            }
+        }
+
+        async function submitDetailedFeedback() {
+            const selectedChips = document.querySelectorAll('.reason-chip.selected');
+            const reasons = Array.from(selectedChips).map(c => c.textContent);
+            const details = document.getElementById('feedbackDetails').value;
+
+            await submitFeedback(false, reasons, details);
+
+            closeFeedbackModal();
+            document.getElementById('feedbackMsg').style.display = 'block';
+            document.getElementById('feedbackMsg').textContent = 'Thank you for your detailed feedback!';
+            document.getElementById('feedbackDown').classList.add('active-down');
+            document.getElementById('feedbackUp').classList.remove('active-up');
+            document.getElementById('feedbackUp').disabled = true;
+            document.getElementById('feedbackDown').disabled = true;
+        }
+
+        async function submitFeedback(isPositive, reasons = [], details = '') {
+            const token = localStorage.getItem('token');
+
+            try {
+                const response = await fetch('/api/feedback', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': `Bearer ${token}`
+                    },
+                    body: JSON.stringify({
+                        content_id: currentPitchId,
+                        content_type: 'pitch',
+                        is_positive: isPositive,
+                        reasons: reasons,
+                        details: details
+                    })
+                });
+
+                return response.ok;
+            } catch (error) {
+                console.error('Error submitting feedback:', error);
+                return false;
+            }
+        }
+
+        async function loadPitches() {
+            const token = localStorage.getItem('token');
+
+            try {
+                const response = await fetch('/api/pitches', {
+                    headers: { 'Authorization': `Bearer ${token}` }
+                });
+
+                if (response.ok) {
+                    const data = await response.json();
+                    const html = data.pitches.length > 0
+                        ? data.pitches.map((p, i) => `
+                            <div class="pitch-item" onclick="viewPitch('${p._id}')" style="cursor: pointer;">
+                                <h5>${p.product} → ${p.persona}</h5>
+                                <small>${new Date(p.created_at).toLocaleString()}</small>
+                            </div>
+                        `).join('')
+                        : '<p>No pitches yet</p>';
+
+                    document.getElementById('pitchList').innerHTML = html;
+                }
+            } catch (error) {
+                console.error('Error loading pitches:', error);
+            }
+        }
+
+        async function viewPitch(pitchId) {
+            const token = localStorage.getItem('token');
+            document.getElementById('loadingSpinner').style.display = 'flex';
+            document.getElementById('pitchOutput').style.display = 'none';
+            document.getElementById('toolDescription').style.display = 'none';
+
+            try {
+                const response = await fetch(`/api/pitches/${pitchId}`, {
+                    headers: { 'Authorization': `Bearer ${token}` }
+                });
+
+                if (response.ok) {
+                    const pitchData = await response.json();
+
+                    // Reconstruct formData from saved pitch data
+                    const formData = {
+                        product: pitchData.product,
+                        industry: pitchData.industry,
+                        persona: pitchData.persona,
+                        customer_type: pitchData.customer_type,
+                        budget_preference: pitchData.budget_preference
+                    };
+
+                    displayPitchOutput(pitchData.ai_output, formData);
+
+                    // Update timestamp to show it's a history item
+                    document.getElementById('resultDate').textContent = new Date(pitchData.created_at).toLocaleString();
+
+                    document.getElementById('loadingSpinner').style.display = 'none';
+                    document.getElementById('pitchOutput').style.display = 'block';
+
+                    // Scroll to results
+                    document.getElementById('pitchOutput').scrollIntoView({ behavior: 'smooth' });
+                }
+            } catch (error) {
+                console.error('Error fetching pitch:', error);
+                document.getElementById('loadingSpinner').style.display = 'none';
+            }
+        }
+
 
         window.closePitchOutput = function() {
             document.getElementById('pitchOutput').style.display = 'none';
@@ -292,9 +503,6 @@
         }
 
         document.addEventListener('DOMContentLoaded', () => {
-            document.getElementById('savePitchBtn').addEventListener('click', () => {
-                alert('Pitch saved successfully!');
-            });
         });
     </script>
 </body>

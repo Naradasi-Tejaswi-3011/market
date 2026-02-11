@@ -107,6 +107,29 @@ class Lead:
         return data
 
 
+class Feedback:
+    """User feedback model for AI generations"""
+    def __init__(self, user_id, item_id, item_type, rating, reasons=None, details=None, created_at=None):
+        self.user_id = user_id
+        self.item_id = item_id  # ID of the campaign, pitch, or lead
+        self.item_type = item_type  # 'campaign', 'pitch', or 'lead'
+        self.rating = rating  # 1 for thumbs up, -1 for thumbs down
+        self.reasons = reasons or [] # List of reasons for negative feedback
+        self.details = details # Optional detailed feedback
+        self.created_at = created_at or datetime.utcnow()
+    
+    def to_dict(self):
+        return {
+            'user_id': self.user_id,
+            'item_id': self.item_id,
+            'item_type': self.item_type,
+            'rating': self.rating,
+            'reasons': self.reasons,
+            'details': self.details,
+            'created_at': self.created_at
+        }
+
+
 class ActivityLog:
     """Activity tracking model"""
     def __init__(self, user_id, action, details, created_at=None):

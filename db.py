@@ -50,6 +50,11 @@ def init_db():
             db.create_collection('leads')
         db.leads.create_index([('user_id', 1), ('created_at', -1)])
         
+        # Feedbacks collection
+        if 'feedbacks' not in db.list_collection_names():
+            db.create_collection('feedbacks')
+        db.feedbacks.create_index([('item_id', 1), ('user_id', 1)])
+        
         # Activity logs collection
         if 'activity_logs' not in db.list_collection_names():
             db.create_collection('activity_logs')

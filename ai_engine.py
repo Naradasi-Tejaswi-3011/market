@@ -135,7 +135,8 @@ INPUTS:
 - Tone: {tone}
 - Language: {language}
 
-IMPORTANT: Generate the ENTIRE pitch in {language} language.
+IMPORTANT: Generate the ENTIRE pitch in {language} language. 
+CRITICAL: Use native scripts for the output (e.g., Devanagari for Hindi, Telugu script for Telugu). Do NOT use Romanized script (English letters).
 
 Return ONLY valid JSON (no markdown, no code blocks):
 {{
@@ -564,13 +565,13 @@ def _intelligent_pitch_fallback(product, description, persona, industry, custome
     
     # Mock language support for key Indian languages (simplified)
     if language == "Hindi":
-        pitch_templates["elevator_pitch"] = f"Ham {industry} me {persona} ki madad karte hain {product} ke madhyam se..."
-        pitch_templates["value_proposition"] = "Behetar vyapaar vriddhi ke liye AI-powered samadhan."
-        pitch_templates["personalized_cta"] = "Aaj hi shuru karein."
+        pitch_templates["elevator_pitch"] = f"हम {industry} क्षेत्र में {persona} को {product} के माध्यम से अपने लक्ष्यों को प्राप्त करने में मदद करते हैं। एक ऐसे बाजार में जहां {description[:30]}... महत्वपूर्ण है, हमारा समाधान आपकी विशिष्ट आवश्यकताओं को पूरा करता है।"
+        pitch_templates["value_proposition"] = "बेहतर व्यवसाय विकास के लिए एआई-संचालित समाधान।"
+        pitch_templates["personalized_cta"] = "आज ही अपना डेमो बुक करें।"
     elif language == "Telugu":
-        pitch_templates["elevator_pitch"] = f"{industry} ranganlo {persona} ki {product} dwara manchi phalithalu andisthunnam..."
-        pitch_templates["value_proposition"] = "Me vyapaaranni AI tho vriddhi cheddam."
-        pitch_templates["personalized_cta"] = "Marihni vivarala kosam సంప్రదించండి."
+        pitch_templates["elevator_pitch"] = f"మేము {industry} రంగంలో {persona} కి {product} ద్వారా మెరుగైన ఫలితాలను సాధించడంలో సహాయపడతాము. {description[:30]}... కీలకమైన ఈ మార్కెట్‌లో, మా పరిష్కారం మీ అవసరాలను తీరుస్తుంది."
+        pitch_templates["value_proposition"] = "మీ వ్యాపారాన్ని AI తో వృద్ధి చేద్దాం."
+        pitch_templates["personalized_cta"] = "మరిన్ని వివరాల కోసం ఈరోజే సంప్రదించండి."
     
     return {
         "status": "success",

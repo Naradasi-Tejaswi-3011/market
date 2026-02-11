@@ -1,11 +1,13 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Campaign Generator - MarketAI Suite</title>
     <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
 </head>
+
 <body>
     <nav class="navbar">
         <div class="nav-brand">
@@ -19,13 +21,13 @@
             <button id="logoutBtn" class="btn btn-logout">Logout</button>
         </div>
     </nav>
-    
+
     <main class="container">
         <div class="page-header">
             <h2>🎯 Campaign Generator</h2>
             <p>AI-powered marketing campaigns with full explainability</p>
         </div>
-        
+
         <div class="content-grid">
             <!-- Input Form -->
             <div class="form-section">
@@ -33,26 +35,16 @@
                 <form id="campaignForm" class="form-group">
                     <div>
                         <label for="product">Product Description *</label>
-                        <input 
-                            type="text" 
-                            id="product" 
-                            name="product" 
-                            placeholder="e.g., AI email marketing tool"
-                            required
-                        >
+                        <input type="text" id="product" name="product" placeholder="e.g., AI email marketing tool"
+                            required>
                     </div>
-                    
+
                     <div>
                         <label for="audience">Target Audience *</label>
-                        <input 
-                            type="text" 
-                            id="audience" 
-                            name="audience" 
-                            placeholder="e.g., Small business owners"
-                            required
-                        >
+                        <input type="text" id="audience" name="audience" placeholder="e.g., Small business owners"
+                            required>
                     </div>
-                    
+
                     <div>
                         <label for="platform">Platform *</label>
                         <select id="platform" name="platform" required>
@@ -66,7 +58,7 @@
                             <option value="Multi-channel">Multi-channel</option>
                         </select>
                     </div>
-                    
+
                     <div>
                         <label for="industry">Industry *</label>
                         <select id="industry" name="industry" required>
@@ -79,21 +71,21 @@
                             <option value="Other">Other</option>
                         </select>
                     </div>
-                    
+
                     <button type="submit" class="btn btn-primary btn-block">
                         Generate Campaign
                     </button>
                 </form>
-                
+
                 <div id="formMessage" class="message"></div>
             </div>
-            
+
             <!-- Output Results -->
             <div class="results-section">
                 <div id="toolDescription" class="tool-description">
                     <h3>AI Campaign Generator</h3>
                     <p>Generate comprehensive marketing campaigns powered by AI in seconds.</p>
-                    
+
                     <div class="feature-list">
                         <div class="feature-item">
                             <span class="feature-icon">💡</span>
@@ -124,7 +116,7 @@
                             </div>
                         </div>
                     </div>
-                    
+
                     <div class="how-it-works">
                         <h4>How It Works</h4>
                         <ol>
@@ -135,20 +127,19 @@
                         </ol>
                     </div>
                 </div>
-                
+
                 <div id="loadingSpinner" class="spinner" style="display: none;">
                     <div class="spinner-content">
                         <div class="spinner-circle"></div>
                         <p>Generating campaign with AI...</p>
                     </div>
                 </div>
-                
+
                 <div id="campaignOutput" style="display: none;">
                     <div style="position: relative; margin-bottom: 1rem;">
                         <h3>Generated Campaign for <span id="platformName"></span></h3>
                         <button type="button" class="modal-close" onclick="window.closeCampaignOutput()" title="Close" style="position: absolute; right: 1.5rem; top: 0;">&times;</button>
                     </div>
-                    
                     <!-- Tab Navigation -->
                     <div class="tab-navigation">
                         <button class="tab-btn active" data-tab="ideas">Campaign Ideas</button>
@@ -156,7 +147,7 @@
                         <button class="tab-btn" data-tab="calendar">Content Calendar</button>
                         <button class="tab-btn" data-tab="competitor">Competitor Analysis</button>
                     </div>
-                    
+
                     <!-- Tab Content -->
                     <div class="tab-content-wrapper">
                         <div class="tab-content active" id="tab-ideas">
@@ -165,21 +156,21 @@
                                 <div id="campaignIdeas"></div>
                             </div>
                         </div>
-                        
+
                         <div class="tab-content" id="tab-cta">
                             <div class="output-card">
                                 <h4>5 Call to Action Suggestions</h4>
                                 <div id="ctaSuggestions"></div>
                             </div>
                         </div>
-                        
+
                         <div class="tab-content" id="tab-calendar">
                             <div class="output-card">
                                 <h4>7-Day Content Calendar</h4>
                                 <div id="contentCalendar"></div>
                             </div>
                         </div>
-                        
+
                         <div class="tab-content" id="tab-competitor">
                             <div class="output-card">
                                 <h4>Competitor Analysis</h4>
@@ -187,12 +178,23 @@
                             </div>
                         </div>
                     </div>
-                    
-                    <button id="saveCampaignBtn" class="btn btn-success">
-                        Save Campaign
-                    </button>
+
+                    <!-- Feedback Section -->
+                    <div id="feedbackSection" class="feedback-section" style="display: none;">
+                        <h4>Was this campaign helpful?</h4>
+                        <div class="feedback-buttons">
+                            <button class="feedback-btn" id="feedbackUp" onclick="handleFeedback(true)">
+                                👍 <span>Yes</span>
+                            </button>
+                            <button class="feedback-btn" id="feedbackDown" onclick="handleFeedback(false)">
+                                👎 <span>No</span>
+                            </button>
+                        </div>
+                        <div id="feedbackMsg" class="feedback-message">Thank you for your feedback!</div>
+                    </div>
+
                 </div>
-                
+
                 <div id="previousCampaigns" class="previous-outputs" style="display: none;">
                     <h4>Previous Campaigns</h4>
                     <div id="campaignList" class="output-list"></div>
@@ -200,20 +202,46 @@
             </div>
         </div>
     </main>
-    
+
     <footer class="footer">
         <p>&copy; 2026 MarketAI Suite - Explainable AI for Business Intelligence</p>
     </footer>
-    
+
+    <!-- Feedback Modal -->
+    <div id="feedbackModalOverlay" class="modal-overlay">
+        <div class="feedback-modal">
+            <div class="modal-header">
+                <h3>Share feedback</h3>
+                <button class="close-modal" onclick="closeFeedbackModal()">&times;</button>
+            </div>
+            <div class="reason-chips" id="reasonChips">
+                <button class="reason-chip" onclick="toggleReason(this)">Incorrect or incomplete</button>
+                <button class="reason-chip" onclick="toggleReason(this)">Not what I asked for</button>
+                <button class="reason-chip" onclick="toggleReason(this)">Slow or buggy</button>
+                <button class="reason-chip" onclick="toggleReason(this)">Style or tone</button>
+                <button class="reason-chip" onclick="toggleReason(this)">Safety or legal concern</button>
+                <button class="reason-chip" onclick="toggleReason(this)">Other</button>
+            </div>
+            <textarea id="feedbackDetails" class="feedback-details" placeholder="Share details (optional)"></textarea>
+            <div class="modal-disclaimer">
+                Your conversation will be included with your feedback to help improve MarketAI. <a href="#">Learn
+                    more</a>
+            </div>
+            <div class="modal-footer">
+                <button id="submitDetailedFeedback" class="btn-submit-feedback" onclick="submitDetailedFeedback()"
+                    disabled>Submit</button>
+            </div>
+        </div>
+    </div>
+
     <script src="{{ url_for('static', filename='app.js') }}"></script>
     <script>
+        let currentCampaignId = null;
         document.addEventListener('DOMContentLoaded', checkAuth);
-        document.getElementById('campaignForm').addEventListener('submit', generateCampaign);
-        document.getElementById('logoutBtn').addEventListener('click', logout);
-        
+
         async function generateCampaign(e) {
             e.preventDefault();
-            
+
             const token = localStorage.getItem('token');
             const formData = {
                 product: document.getElementById('product').value,
@@ -221,12 +249,12 @@
                 platform: document.getElementById('platform').value,
                 industry: document.getElementById('industry').value
             };
-            
+
             // Show spinner
             document.getElementById('loadingSpinner').style.display = 'flex';
             document.getElementById('campaignOutput').style.display = 'none';
             document.getElementById('formMessage').textContent = '';
-            
+
             try {
                 const response = await fetch('/api/campaigns/generate', {
                     method: 'POST',
@@ -236,10 +264,10 @@
                     },
                     body: JSON.stringify(formData)
                 });
-                
+
                 const data = await response.json();
                 document.getElementById('loadingSpinner').style.display = 'none';
-                
+
                 if (response.ok) {
                     document.getElementById('toolDescription').style.display = 'none';
                     displayCampaignOutput(data.campaign);
@@ -255,36 +283,36 @@
                 document.getElementById('formMessage').classList.add('error');
             }
         }
-        
+
         function displayCampaignOutput(campaign) {
             // Set platform name
             const platform = document.getElementById('platform').value;
             document.getElementById('platformName').textContent = platform;
-            
+
             // Display Campaign Ideas
             document.getElementById('campaignIdeas').innerHTML = campaign.campaign_ideas
                 .map((idea, i) => `
                     <div class="campaign-idea-item">
-                        <div class="idea-number">${i+1}</div>
+                        <div class="idea-number">${i + 1}</div>
                         <div class="idea-content">
                             <h5>${idea.title}</h5>
                             <p>${idea.description}</p>
                         </div>
                     </div>
                 `).join('');
-            
+
             // Display CTA Suggestions
             document.getElementById('ctaSuggestions').innerHTML = campaign.cta_suggestions
                 .map((cta, i) => `
                     <div class="cta-item">
-                        <div class="cta-number">${i+1}</div>
+                        <div class="cta-number">${i + 1}</div>
                         <div class="cta-content">
                             <div class="cta-text">${cta.cta_text}</div>
                             <p>${cta.description}</p>
                         </div>
                     </div>
                 `).join('');
-            
+
             // Display Content Calendar
             document.getElementById('contentCalendar').innerHTML = `
                 <div class="calendar-grid">
@@ -302,7 +330,7 @@
                     `).join('')}
                 </div>
             `;
-            
+
             // Display Competitor Analysis
             const competitor = campaign.competitor_analysis;
             document.getElementById('competitorAnalysis').innerHTML = `
@@ -325,18 +353,115 @@
                     </ul>
                 </div>
             `;
-            
+
             document.getElementById('campaignOutput').style.display = 'block';
+
+            // Show feedback section and reset buttons
+            document.getElementById('feedbackSection').style.display = 'block';
+            document.getElementById('feedbackMsg').style.display = 'none';
+            document.getElementById('feedbackUp').classList.remove('active-up');
+            document.getElementById('feedbackDown').classList.remove('active-down');
+            document.getElementById('feedbackUp').disabled = false;
+            document.getElementById('feedbackDown').disabled = false;
         }
-        
+
+        async function handleFeedback(isPositive) {
+            if (!currentCampaignId) return;
+
+            if (isPositive) {
+                // For positive feedback, just submit and show thank you
+                await submitFeedback(true);
+                document.getElementById('feedbackMsg').style.display = 'block';
+                document.getElementById('feedbackUp').classList.add('active-up');
+                document.getElementById('feedbackDown').classList.remove('active-down');
+                document.getElementById('feedbackUp').disabled = true;
+                document.getElementById('feedbackDown').disabled = true;
+            } else {
+                // For negative feedback, show the modal
+                openFeedbackModal();
+            }
+        }
+
+        function openFeedbackModal() {
+            document.getElementById('feedbackModalOverlay').classList.add('active');
+            // Reset modal state
+            const chips = document.querySelectorAll('.reason-chip');
+            chips.forEach(c => c.classList.remove('selected'));
+            document.getElementById('feedbackDetails').value = '';
+            updateSubmitButtonState();
+        }
+
+        function closeFeedbackModal() {
+            document.getElementById('feedbackModalOverlay').classList.remove('active');
+        }
+
+        function toggleReason(btn) {
+            btn.classList.toggle('selected');
+            updateSubmitButtonState();
+        }
+
+        function updateSubmitButtonState() {
+            const selectedChips = document.querySelectorAll('.reason-chip.selected');
+            const submitBtn = document.getElementById('submitDetailedFeedback');
+            if (selectedChips.length > 0) {
+                submitBtn.disabled = false;
+                submitBtn.classList.add('ready');
+            } else {
+                submitBtn.disabled = true;
+                submitBtn.classList.remove('ready');
+            }
+        }
+
+        async function submitDetailedFeedback() {
+            const selectedChips = document.querySelectorAll('.reason-chip.selected');
+            const reasons = Array.from(selectedChips).map(c => c.textContent);
+            const details = document.getElementById('feedbackDetails').value;
+
+            await submitFeedback(false, reasons, details);
+
+            closeFeedbackModal();
+            document.getElementById('feedbackMsg').style.display = 'block';
+            document.getElementById('feedbackMsg').textContent = 'Thank you for your detailed feedback!';
+            document.getElementById('feedbackDown').classList.add('active-down');
+            document.getElementById('feedbackUp').classList.remove('active-up');
+            document.getElementById('feedbackUp').disabled = true;
+            document.getElementById('feedbackDown').disabled = true;
+        }
+
+        async function submitFeedback(isPositive, reasons = [], details = '') {
+            const token = localStorage.getItem('token');
+
+            try {
+                const response = await fetch('/api/feedback', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': `Bearer ${token}`
+                    },
+                    body: JSON.stringify({
+                        content_id: currentCampaignId,
+                        content_type: 'campaign',
+                        is_positive: isPositive,
+                        reasons: reasons,
+                        details: details
+                    })
+                });
+
+                return response.ok;
+            } catch (error) {
+                console.error('Error submitting feedback:', error);
+                return false;
+            }
+        }
+
         async function loadCampaigns() {
             const token = localStorage.getItem('token');
-            
+
             try {
                 const response = await fetch('/api/campaigns', {
                     headers: { 'Authorization': `Bearer ${token}` }
                 });
-                
+
                 if (response.ok) {
                     const data = await response.json();
                     const html = data.campaigns.length > 0
@@ -347,48 +472,45 @@
                             </div>
                         `).join('')
                         : '<p>No campaigns yet</p>';
-                    
+
                     document.getElementById('campaignList').innerHTML = html;
                 }
             } catch (error) {
                 console.error('Error loading campaigns:', error);
             }
         }
-        
-        let currentCampaignId = null;
 
         window.closeCampaignOutput = function() {
             document.getElementById('campaignOutput').style.display = 'none';
             document.getElementById('toolDescription').style.display = 'block';
             document.getElementById('campaignForm').reset();
         }
-        
         document.addEventListener('DOMContentLoaded', () => {
             loadCampaigns();
-            
+
+            // Attach form submit handler
+            document.getElementById('campaignForm').addEventListener('submit', generateCampaign);
+            document.getElementById('logoutBtn').addEventListener('click', logout);
+
             // Tab switching functionality
             const tabBtns = document.querySelectorAll('.tab-btn');
             const tabContents = document.querySelectorAll('.tab-content');
-            
+
             tabBtns.forEach(btn => {
                 btn.addEventListener('click', () => {
                     const tabName = btn.getAttribute('data-tab');
-                    
+
                     // Remove active class from all buttons and contents
                     tabBtns.forEach(b => b.classList.remove('active'));
                     tabContents.forEach(c => c.classList.remove('active'));
-                    
+
                     // Add active class to clicked button and corresponding content
                     btn.classList.add('active');
                     document.getElementById(`tab-${tabName}`).classList.add('active');
                 });
             });
-            
-            // Save campaign button
-            document.getElementById('saveCampaignBtn').addEventListener('click', () => {
-                alert('Campaign saved successfully!');
-            });
         });
     </script>
 </body>
+
 </html>
