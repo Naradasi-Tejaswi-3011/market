@@ -120,7 +120,7 @@ CRITICAL: Return ONLY the JSON object, nothing else."""
         }
 
 
-def generate_pitch(product, description, persona, industry, customer_type, budget_preference):
+def generate_pitch(product, description, persona, industry, customer_type, budget_preference, language='English'):
     """
     Generate personalized sales pitch using Groq AI with explainability.
     Returns pitch data with confidence scoring.
@@ -128,44 +128,47 @@ def generate_pitch(product, description, persona, industry, customer_type, budge
     
     tone = INDUSTRY_TONES.get(industry, 'professional')
     
-    prompt = f"""You are a master sales strategist. Create a personalized sales pitch with explicit reasoning.
+    prompt = f"""You are a master sales strategist. Create a personalized sales pitch.
 
 INPUTS:
 - Product Name: {product}
 - Product Description: {description}
 - Customer Persona: {persona}
 - Industry: {industry}
-- Costumer Type: {customer_type}
+- Customer Type: {customer_type}
 - Budget Preference: {budget_preference}
 - Tone: {tone}
+- Language: {language}
 
-Return ONLY valid JSON (no markdown, no code blocks) with this exact structure:
+IMPORTANT: Generate the ENTIRE pitch in {language} language.
+
+Return ONLY valid JSON (no markdown, no code blocks):
 {{
-  "elevator_pitch": "Compelling 1-minute+ pitch (approx 150-180 words) that flows naturally and covers the problem, solution, and value proposition in thorough detail.",
-  "value_proposition": "Clear value statement (1-2 sentences)",
+  "elevator_pitch": "Compelling 1-minute+ pitch in {language} (150-180 words)",
+  "value_proposition": "Clear value statement in {language}",
   "key_differentiators": [
-    "Differentiator 1",
-    "Differentiator 2",
-    "Differentiator 3"
+    "Differentiator 1 in {language}",
+    "Differentiator 2 in {language}",
+    "Differentiator 3 in {language}"
   ],
-  "personalized_cta": "Specific call-to-action for this persona",
+  "personalized_cta": "Call-to-action in {language}",
   "deal_confidence_score": 75,
   "confidence_breakdown": {{
-    "budget_alignment": "How budget matches value",
-    "pain_point_fit": "How well solution fits their needs",
-    "authority_match": "How well we match their authority/role",
-    "timeline_fit": "How well we match their timeline"
+    "budget_alignment": "Analysis in {language}",
+    "pain_point_fit": "Analysis in {language}",
+    "authority_match": "Analysis in {language}",
+    "timeline_fit": "Analysis in {language}"
   }},
   "reasoning": {{
-    "why_this_pitch": "Why this approach works for this persona",
-    "industry_nuances": "How industry affects pitch",
-    "size_considerations": "How customer type affects pitch",
-    "objection_handling": "Likely objections and responses"
+    "why_this_pitch": "Reasoning in {language}",
+    "industry_nuances": "Analysis in {language}",
+    "size_considerations": "Analysis in {language}",
+    "objection_handling": "Handling in {language}"
   }},
   "recommended_next_actions": [
-    "Action 1",
-    "Action 2",
-    "Action 3"
+    "Action 1 in {language}",
+    "Action 2 in {language}",
+    "Action 3 in {language}"
   ]
 }}
 
@@ -174,7 +177,8 @@ CRITICAL: Return ONLY the JSON object, nothing else."""
     try:
         message = client.chat.completions.create(
             model=MODEL,
-            max_tokens=2000,
+            max_tokens=3000,
+            temperature=0.7,
             messages=[{"role": "user", "content": prompt}]
         )
         
@@ -182,9 +186,15 @@ CRITICAL: Return ONLY the JSON object, nothing else."""
         
         # Remove markdown if present
         if response_text.startswith('```'):
-            response_text = response_text.split('```')[1]
+            lines = response_text.split('\n')
+            response_text = '\n'.join(lines[1:-1]) if len(lines) > 2 else response_text
             if response_text.startswith('json'):
-                response_text = response_text[4:]
+                response_text = response_text[4:].strip()
+        
+        # Clean up response
+        response_text = response_text.strip()
+        if response_text.endswith('```'):
+            response_text = response_text[:-3].strip()
         
         ai_data = json.loads(response_text)
         
@@ -195,12 +205,15 @@ CRITICAL: Return ONLY the JSON object, nothing else."""
         }
     
     except json.JSONDecodeError as e:
+        print(f"JSON Parse Error: {str(e)}")
+        print(f"Response text: {response_text[:500] if 'response_text' in locals() else 'N/A'}")
         return {
             'status': 'error',
-            'error': f'AI response parsing error: {str(e)}',
-            'raw_response': response_text if 'response_text' in locals() else None
+            'error': f'AI response parsing error. Please try again.',
+            'raw_response': response_text[:500] if 'response_text' in locals() else None
         }
     except Exception as e:
+        print(f"Generation Error: {str(e)}")
         return {
             'status': 'error',
             'error': f'AI generation error: {str(e)}'

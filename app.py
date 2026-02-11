@@ -149,12 +149,13 @@ def generate_pitch_handler():
     industry = data.get('industry')
     customer_type = data.get('customer_type')
     budget_preference = data.get('budget_preference')
+    language = data.get('language', 'English')
     
     if not all([product, description, persona, industry, customer_type, budget_preference]):
         return jsonify({'error': 'Missing required fields'}), 400
     
     # Generate pitch using AI
-    ai_result = generate_pitch(product, description, persona, industry, customer_type, budget_preference)
+    ai_result = generate_pitch(product, description, persona, industry, customer_type, budget_preference, language)
     
     if ai_result['status'] != 'success':
         return jsonify(ai_result), 500
