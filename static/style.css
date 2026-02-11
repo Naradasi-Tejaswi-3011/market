@@ -380,7 +380,7 @@ textarea:focus {
 
 /* ============= MESSAGE ============= */
 
-.message {
+.message, .message:empty {
     padding: 1rem;
     border-radius: 0.5rem;
     margin-top: 1rem;

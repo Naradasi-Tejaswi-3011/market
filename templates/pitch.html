@@ -201,7 +201,10 @@
 
             document.getElementById('loadingSpinner').style.display = 'flex';
             document.getElementById('pitchOutput').style.display = 'none';
-            document.getElementById('formMessage').textContent = '';
+            const formMessage = document.getElementById('formMessage');
+            formMessage.textContent = '';
+            formMessage.classList.remove('error');
+            formMessage.style.display = 'none';
 
             try {
                 const response = await fetch('/api/pitches/generate', {
