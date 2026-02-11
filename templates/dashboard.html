@@ -13,7 +13,9 @@
         </div>
         <div class="nav-menu">
             <a href="/" class="nav-link active">Home</a>
-            <a href="/campaign" class="nav-link">Campaign Generator</a>
+            <a href="/campaign" class="nav-link">Campaigns</a>
+            <a href="/pitch" class="nav-link">Pitches</a>
+            <a href="/lead" class="nav-link">Leads</a>
             <button id="logoutBtn" class="btn btn-logout">Logout</button>
         </div>
     </nav>
@@ -52,6 +54,7 @@
             <div id="activityList" class="activity-list">
                 <p class="loading">Loading activity...</p>
             </div>
+            <button id="showMoreBtn" class="btn btn-show-more" style="display: none; margin-top: 15px;">Show More</button>
         </section>
     </main>
     
@@ -126,19 +129,57 @@
                 
                 if (response.ok) {
                     const data = await response.json();
-                    const activityHtml = data.activities.length > 0 
-                        ? data.activities.map(a => `
-                            <div class="activity-item">
-                                <strong>${a.action.replace(/_/g, ' ')}</strong>
-                                <span class="activity-time">${new Date(a.created_at).toLocaleString()}</span>
-                            </div>
-                        `).join('')
-                        : '<p>No activity yet. Start generating campaigns, pitches, or scoring leads!</p>';
+                    const activities = data.activities || [];
+                    const itemsToShow = 3;
+                    const showMoreBtn = document.getElementById('showMoreBtn');
                     
-                    document.getElementById('activityList').innerHTML = activityHtml;
+                    if (activities.length === 0) {
+                        document.getElementById('activityList').innerHTML = '<p>No activity yet. Start generating campaigns, pitches, or scoring leads!</p>';
+                        showMoreBtn.style.display = 'none';
+                    } else {
+                        // Store all activities for show more functionality
+                        window.allActivities = activities;
+                        window.currentActivityIndex = itemsToShow;
+                        
+                        // Display initial items
+                        displayActivities(activities.slice(0, itemsToShow));
+                        
+                        // Show button if there are more items
+                        if (activities.length > itemsToShow) {
+                            showMoreBtn.style.display = 'block';
+                            showMoreBtn.onclick = () => loadMoreActivity();
+                        } else {
+                            showMoreBtn.style.display = 'none';
+                        }
+                    }
                 }
             } catch (error) {
                 console.error('Error loading activity:', error);
+            }
+        }
+        
+        function displayActivities(activities) {
+            const activityHtml = activities.map(a => `
+                <div class="activity-item">
+                    <strong>${a.action.replace(/_/g, ' ')}</strong>
+                    <span class="activity-time">${new Date(a.created_at).toLocaleString()}</span>
+                </div>
+            `).join('');
+            
+            document.getElementById('activityList').innerHTML = activityHtml;
+        }
+        
+        function loadMoreActivity() {
+            const activities = window.allActivities;
+            const itemsToShow = 3;
+            const nextIndex = window.currentActivityIndex + itemsToShow;
+            
+            displayActivities(activities.slice(0, nextIndex));
+            window.currentActivityIndex = nextIndex;
+            
+            // Hide button if all items are shown
+            if (nextIndex >= activities.length) {
+                document.getElementById('showMoreBtn').style.display = 'none';
             }
         }
         
