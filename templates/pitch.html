@@ -72,7 +72,9 @@
                                 <option value="Large Enterprise">Large Enterprise</option>
                             </select>
                         </div>
+                    </div>
 
+                    <div class="form-row">
                         <div class="form-col">
                             <label for="budget_preference">CUSTOMER BUDGET PREFERENCE *</label>
                             <select id="budget_preference" name="budget_preference" required>
@@ -81,6 +83,18 @@
                                 <option value="Mid Range">Mid Range (₹30,000 - ₹70,000)</option>
                                 <option value="Premium">Premium (Above ₹70,000)</option>
                                 <option value="Not Sure">Not Sure</option>
+                            </select>
+                        </div>
+
+                        <div class="form-col">
+                            <label for="language">PITCH LANGUAGE *</label>
+                            <select id="language" name="language" required>
+                                <option value="English">English</option>
+                                <option value="Telugu">Telugu</option>
+                                <option value="Hindi">Hindi</option>
+                                <option value="Tamil">Tamil</option>
+                                <option value="Malayalam">Malayalam</option>
+                                <option value="Kannada">Kannada</option>
                             </select>
                         </div>
                     </div>
@@ -221,12 +235,16 @@
                 persona: document.getElementById('persona').value,
                 industry: document.getElementById('industry').value,
                 customer_type: document.getElementById('customer_type').value,
-                budget_preference: document.getElementById('budget_preference').value
+                budget_preference: document.getElementById('budget_preference').value,
+                language: document.getElementById('language').value
             };
 
             document.getElementById('loadingSpinner').style.display = 'flex';
             document.getElementById('pitchOutput').style.display = 'none';
-            document.getElementById('formMessage').textContent = '';
+            const formMessage = document.getElementById('formMessage');
+            formMessage.textContent = '';
+            formMessage.classList.remove('error');
+            formMessage.style.display = 'none';
 
             try {
                 const response = await fetch('/api/pitches/generate', {

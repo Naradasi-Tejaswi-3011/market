@@ -1,11 +1,13 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Lead Scorer - MarketAI Suite</title>
     <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
 </head>
+
 <body>
     <nav class="navbar">
         <div class="nav-brand">
@@ -19,13 +21,13 @@
             <button id="logoutBtn" class="btn btn-logout">Logout</button>
         </div>
     </nav>
-    
+
     <main class="container">
         <div class="page-header">
             <h2>⭐ Lead Scoring System</h2>
             <p>Intelligent lead qualification with detailed reasoning</p>
         </div>
-        
+
         <div class="content-grid">
             <!-- Input Form -->
             <div class="form-section">
@@ -43,18 +45,13 @@
                             <option value="Unknown">Unknown</option>
                         </select>
                     </div>
-                    
+
                     <div>
                         <label for="business_need">Business Need *</label>
-                        <input 
-                            type="text" 
-                            id="business_need" 
-                            name="business_need" 
-                            placeholder="e.g., Inventory management, marketing automation"
-                            required
-                        >
+                        <input type="text" id="business_need" name="business_need"
+                            placeholder="e.g., Inventory management, marketing automation" required>
                     </div>
-                    
+
                     <div>
                         <label for="urgency">Urgency *</label>
                         <select id="urgency" name="urgency" required>
@@ -65,7 +62,7 @@
                             <option value="Exploring options">Exploring options</option>
                         </select>
                     </div>
-                    
+
                     <div>
                         <label for="authority">Authority Level *</label>
                         <select id="authority" name="authority" required>
@@ -76,7 +73,7 @@
                             <option value="End User">End User</option>
                         </select>
                     </div>
-                    
+
                     <div>
                         <label for="industry">Industry *</label>
                         <select id="industry" name="industry" required>
@@ -89,15 +86,15 @@
                             <option value="Other">Other</option>
                         </select>
                     </div>
-                    
+
                     <button type="submit" class="btn btn-primary btn-block">
                         Score Lead
                     </button>
                 </form>
-                
+
                 <div id="formMessage" class="message"></div>
             </div>
-            
+
             <!-- Output Results -->
             <div class="results-section">
                 <div id="loadingSpinner" class="spinner" style="display: none;">
@@ -106,13 +103,15 @@
                         <p>Analyzing lead profile...</p>
                     </div>
                 </div>
-                
+
                 <!-- Initial Placeholder Card -->
                 <div id="placeholderCard" class="placeholder-card">
                     <div class="placeholder-icon">🤖</div>
                     <h3>Lead Qualification Insights</h3>
-                    <p>AI evaluates leads based on <strong>Budget, Need, Urgency, Authority,</strong> and <strong>Industry fit.</strong></p>
-                    <p class="secondary-text">Enter lead details and click "Score Lead" to see a detailed assessment.</p>
+                    <p>AI evaluates leads based on <strong>Budget, Need, Urgency, Authority,</strong> and
+                        <strong>Industry fit.</strong></p>
+                    <p class="secondary-text">Enter lead details and click "Score Lead" to see a detailed assessment.
+                    </p>
                 </div>
 
                 <div id="leadOutput" style="display: none;">
@@ -129,7 +128,7 @@
                             <button class="tab-btn" onclick="switchTab('strategy')">Strategy</button>
                         </div>
                     </div>
-                    
+
                     <!-- Tab Contents -->
                     <div class="tab-content" id="overview-tab">
                         <div class="output-card lead-score-card">
@@ -201,7 +200,7 @@
             </div>
         </div>
     </main>
-    
+
     <footer class="footer">
         <p>&copy; 2026 MarketAI Suite - Explainable AI for Business Intelligence</p>
     </footer>
@@ -230,20 +229,18 @@
             </div>
         </div>
     </div>
-    
+
     <script src="{{ url_for('static', filename='app.js') }}"></script>
     <script>
+        let currentLeadId = null;
         document.addEventListener('DOMContentLoaded', checkAuth);
         document.getElementById('leadForm').addEventListener('submit', scoreLead);
         document.getElementById('logoutBtn').addEventListener('click', logout);
-        
-        let currentLeadId = null;
-        
         function switchTab(tabId) {
             // Update buttons
             const buttons = document.querySelectorAll('.tab-btn');
             buttons.forEach(btn => {
-                if (btn.innerText.toLowerCase().includes(tabId.toLowerCase()) || 
+                if (btn.innerText.toLowerCase().includes(tabId.toLowerCase()) ||
                     (tabId === 'analysis' && btn.innerText.includes('Analysis'))) {
                     btn.classList.add('active');
                 } else {
@@ -260,7 +257,7 @@
 
         async function scoreLead(e) {
             e.preventDefault();
-            
+
             const token = localStorage.getItem('token');
             const formData = {
                 budget: document.getElementById('budget').value,
@@ -269,12 +266,15 @@
                 authority: document.getElementById('authority').value,
                 industry: document.getElementById('industry').value
             };
-            
+
             document.getElementById('loadingSpinner').style.display = 'flex';
             document.getElementById('leadOutput').style.display = 'none';
             document.getElementById('placeholderCard').style.display = 'none';
-            document.getElementById('formMessage').textContent = '';
-            
+            const formMessage = document.getElementById('formMessage');
+            formMessage.textContent = '';
+            formMessage.classList.remove('error');
+            formMessage.style.display = 'none';
+
             try {
                 const response = await fetch('/api/leads/score', {
                     method: 'POST',
@@ -284,10 +284,10 @@
                     },
                     body: JSON.stringify(formData)
                 });
-                
+
                 const data = await response.json();
                 document.getElementById('loadingSpinner').style.display = 'none';
-                
+
                 if (response.ok) {
                     displayLeadOutput(data.lead_score);
                     currentLeadId = data.lead_id;
@@ -304,29 +304,29 @@
                 document.getElementById('placeholderCard').style.display = 'block';
             }
         }
-        
+
         function displayLeadOutput(leadScore) {
             const score = leadScore.lead_score;
             const category = leadScore.lead_category;
             const convProb = leadScore.conversion_probability;
-            
+
             // Score circle with color coding
             document.getElementById('scoreCircle').textContent = score;
             const color = category === 'Hot' ? '#10b981' : category === 'Warm' ? '#f59e0b' : '#ef4444';
             document.getElementById('scoreCircle').style.borderColor = color;
-            
+
             // Enhanced tier display
             const tierMap = {
                 'Hot': { tier: 'A', intent: 'High buying intent. Immediate prioritization recommended.' },
                 'Warm': { tier: 'B', intent: 'Moderate interest with positive indicators. Follow up within 48 hours.' },
                 'Cold': { tier: 'C', intent: 'Limited immediate interest. Nurture for future opportunity.' }
             };
-            
+
             const tierInfo = tierMap[category] || tierMap['Warm'];
             document.getElementById('scoreTierText').innerHTML = `🔥 ${category} Lead (Tier ${tierInfo.tier})`;
             document.getElementById('scoreIntentText').textContent = tierInfo.intent;
             document.getElementById('conversionProb').textContent = `${convProb}% estimated conversion probability`;
-            
+
             // Populate Lead Snapshot
             const formData = {
                 industry: document.getElementById('industry').value,
@@ -335,7 +335,7 @@
                 authority: document.getElementById('authority').value,
                 business_need: document.getElementById('business_need').value
             };
-            
+
             // Detailed reasoning
             const reasoning = leadScore.detailed_reasoning;
             document.getElementById('detailedReasoning').innerHTML = `
@@ -360,7 +360,7 @@
                     <p>${reasoning.industry_context}</p>
                 </div>
             `;
-            
+
             // Score breakdown
             const breakdown = leadScore.score_breakdown;
             document.getElementById('scoreBreakdown').innerHTML = `
@@ -410,12 +410,12 @@
                     </div>
                 </div>
             `;
-            
+
             // Risk Assessment with color-coded level
             const riskFactors = leadScore.risk_factors || [];
             let riskLevel = leadScore.risk_level || 'Low';
             let riskColor = '#10b981';
-            
+
             if (riskLevel === 'High' || riskFactors.length > 2) {
                 riskLevel = 'High';
                 riskColor = '#ef4444';
@@ -423,7 +423,7 @@
                 riskLevel = 'Medium';
                 riskColor = '#f59e0b';
             }
-            
+
             const riskBadge = document.getElementById('riskLevel');
             riskBadge.textContent = riskLevel;
             riskBadge.style.backgroundColor = riskColor;
@@ -431,11 +431,11 @@
             riskBadge.style.padding = '4px 12px';
             riskBadge.style.borderRadius = '4px';
             riskBadge.style.fontWeight = 'bold';
-            
+
             document.getElementById('riskFactors').innerHTML = riskFactors.length > 0
                 ? `<div class="risk-concerns"><strong>Primary Concerns:</strong><ul>${riskFactors.map(r => `<li>${r}</li>`).join('')}</ul></div>`
                 : '<p class="low-risk">✓ No significant risk factors identified</p>';
-            
+
             // Sales Strategy Section
             const salesApproach = determineSalesApproach(category, formData.authority, formData.budget);
             document.getElementById('salesStrategy').innerHTML = `
@@ -452,12 +452,12 @@
                     <p>${salesApproach.engagement}</p>
                 </div>
             `;
-            
+
             // Next actions
             document.getElementById('nextActions').innerHTML = leadScore.next_actions
                 .map(a => `<div class="action-item">→ ${a}</div>`)
                 .join('');
-            
+
             document.getElementById('leadOutput').style.display = 'block';
 
             // Show feedback section and reset buttons
@@ -554,7 +554,7 @@
                 return false;
             }
         }
-        
+
         function determineSalesApproach(category, authority, budget) {
             if (category === 'Hot') {
                 return {
@@ -576,7 +576,7 @@
                 };
             }
         }
-        
+
         document.addEventListener('DOMContentLoaded', () => {
             document.getElementById('scoreLeadBtn').addEventListener('click', () => {
                 alert('Lead scoring saved successfully!');
@@ -584,4 +584,5 @@
         });
     </script>
 </body>
+
 </html>
