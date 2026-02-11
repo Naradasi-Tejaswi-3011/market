@@ -51,11 +51,47 @@
         
         <section class="recent-activity">
             <h3>Recent Activity</h3>
-            <div id="activityList" class="activity-list">
-                <p class="loading">Loading activity...</p>
+            <div class="activity-tabs">
+                <button class="activity-tab-btn active" onclick="showActivityModal('campaigns')">
+                    <span class="tab-icon">🎯</span>
+                    <span>Campaigns</span>
+                </button>
+                <button class="activity-tab-btn" onclick="showActivityModal('pitches')">
+                    <span class="tab-icon">💬</span>
+                    <span>Pitches</span>
+                </button>
+                <button class="activity-tab-btn" onclick="showActivityModal('leads')">
+                    <span class="tab-icon">📊</span>
+                    <span>Leads</span>
+                </button>
             </div>
-            <button id="showMoreBtn" class="btn btn-show-more" style="display: none; margin-top: 15px;">Show More</button>
         </section>
+
+        <!-- Pitch View Modal -->
+        <div id="pitchViewModal" class="modal" style="display: none;">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h3 id="modalPitchTitle">Pitch Details</h3>
+                    <button class="modal-close" onclick="closePitchModal()">&times;</button>
+                </div>
+                <div class="modal-body" id="modalPitchBody">
+                    <!-- Pitch details will be loaded here -->
+                </div>
+            </div>
+        </div>
+
+        <!-- Activity Details Modal -->
+        <div id="activityModal" class="modal" style="display: none;">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h3 id="modalActivityTitle">Activity Details</h3>
+                    <button class="modal-close" onclick="closeActivityModal()">&times;</button>
+                </div>
+                <div class="modal-body" id="modalActivityBody">
+                    <!-- Activity details will be loaded here -->
+                </div>
+            </div>
+        </div>
     </main>
     
     <footer class="footer">
@@ -87,7 +123,6 @@
             
             // Load counts
             await loadCounts();
-            await loadActivity();
         });
         
         async function loadCounts() {
@@ -119,38 +154,48 @@
             }
         }
         
-        async function loadActivity() {
+        async function showActivityModal(type) {
             const token = localStorage.getItem('token');
             
+            // Update tab buttons
+            document.querySelectorAll('.activity-tab-btn').forEach(btn => {
+                btn.classList.remove('active');
+            });
+            event.target.closest('.activity-tab-btn').classList.add('active');
+            
             try {
-                const response = await fetch('/api/activity', {
-                    headers: { 'Authorization': `Bearer ${token}` }
-                });
-                
-                if (response.ok) {
-                    const data = await response.json();
-                    const activities = data.activities || [];
-                    const itemsToShow = 3;
-                    const showMoreBtn = document.getElementById('showMoreBtn');
+                if (type === 'campaigns') {
+                    const response = await fetch('/api/campaigns', {
+                        headers: { 'Authorization': `Bearer ${token}` }
+                    });
                     
-                    if (activities.length === 0) {
-                        document.getElementById('activityList').innerHTML = '<p>No activity yet. Start generating campaigns, pitches, or scoring leads!</p>';
-                        showMoreBtn.style.display = 'none';
-                    } else {
-                        // Store all activities for show more functionality
-                        window.allActivities = activities;
-                        window.currentActivityIndex = itemsToShow;
-                        
-                        // Display initial items
-                        displayActivities(activities.slice(0, itemsToShow));
-                        
-                        // Show button if there are more items
-                        if (activities.length > itemsToShow) {
-                            showMoreBtn.style.display = 'block';
-                            showMoreBtn.onclick = () => loadMoreActivity();
-                        } else {
-                            showMoreBtn.style.display = 'none';
-                        }
+                    if (response.ok) {
+                        const data = await response.json();
+                        const campaigns = data.campaigns || [];
+                        displayCampaignsModal(campaigns);
+                        document.getElementById('activityModal').style.display = 'flex';
+                    }
+                } else if (type === 'pitches') {
+                    const response = await fetch('/api/pitches', {
+                        headers: { 'Authorization': `Bearer ${token}` }
+                    });
+                    
+                    if (response.ok) {
+                        const data = await response.json();
+                        const pitches = data.pitches || [];
+                        displayPitchesModal(pitches);
+                        document.getElementById('activityModal').style.display = 'flex';
+                    }
+                } else if (type === 'leads') {
+                    const response = await fetch('/api/leads', {
+                        headers: { 'Authorization': `Bearer ${token}` }
+                    });
+                    
+                    if (response.ok) {
+                        const data = await response.json();
+                        const leads = data.leads || [];
+                        displayLeadsModal(leads);
+                        document.getElementById('activityModal').style.display = 'flex';
                     }
                 }
             } catch (error) {
@@ -158,29 +203,99 @@
             }
         }
         
-        function displayActivities(activities) {
-            const activityHtml = activities.map(a => `
-                <div class="activity-item">
-                    <strong>${a.action.replace(/_/g, ' ')}</strong>
-                    <span class="activity-time">${new Date(a.created_at).toLocaleString()}</span>
-                </div>
-            `).join('');
+        function displayCampaignsModal(campaigns) {
+            document.getElementById('modalActivityTitle').textContent = 'Campaigns';
             
-            document.getElementById('activityList').innerHTML = activityHtml;
+            if (campaigns.length === 0) {
+                document.getElementById('modalActivityBody').innerHTML = '<p style="text-align: center; padding: 2rem;">No campaigns yet. <a href="/campaign">Create your first campaign</a></p>';
+            } else {
+                const campaignHtml = campaigns.map(c => `
+                    <div class="activity-modal-item campaign-modal-item" onclick="viewCampaignDetails('${c._id}', event)">
+                        <div class="activity-modal-header">
+                            <div>
+                                <strong>${c.product}</strong>
+                                <p class="campaign-subtitle-small">${c.platform} | ${c.industry}</p>
+                            </div>
+                            <span class="activity-timestamp">${new Date(c.created_at).toLocaleDateString()}</span>
+                        </div>
+                    </div>
+                `).join('');
+                
+                document.getElementById('modalActivityBody').innerHTML = `<div class="activity-modal-list">${campaignHtml}</div>`;
+            }
         }
         
-        function loadMoreActivity() {
-            const activities = window.allActivities;
-            const itemsToShow = 3;
-            const nextIndex = window.currentActivityIndex + itemsToShow;
+        function displayPitchesModal(pitches) {
+            document.getElementById('modalActivityTitle').textContent = 'Pitches';
             
-            displayActivities(activities.slice(0, nextIndex));
-            window.currentActivityIndex = nextIndex;
-            
-            // Hide button if all items are shown
-            if (nextIndex >= activities.length) {
-                document.getElementById('showMoreBtn').style.display = 'none';
+            if (pitches.length === 0) {
+                document.getElementById('modalActivityBody').innerHTML = '<p style="text-align: center; padding: 2rem;">No pitches yet. <a href="/pitch">Create your first pitch</a></p>';
+            } else {
+                const pitchHtml = pitches.map(p => `
+                    <div class="activity-modal-item pitch-modal-item" onclick="viewPitchFromHistory('${p._id}', event)">
+                        <div class="activity-modal-header">
+                            <div>
+                                <strong>${p.product} → ${p.persona}</strong>
+                                <p class="pitch-subtitle-small">${p.industry} | ${p.customer_type}</p>
+                            </div>
+                            <span class="activity-timestamp">${new Date(p.created_at).toLocaleDateString()}</span>
+                        </div>
+                    </div>
+                `).join('');
+                
+                document.getElementById('modalActivityBody').innerHTML = `<div class="activity-modal-list">${pitchHtml}</div>`;
             }
+        }
+        
+        function displayActivityModal(type, activities) {
+            const titleMap = {
+                campaigns: 'Campaign Activity',
+                pitches: 'Pitch Activity',
+                leads: 'Lead Activity'
+            };
+            
+            document.getElementById('modalActivityTitle').textContent = titleMap[type];
+            
+            if (activities.length === 0) {
+                document.getElementById('modalActivityBody').innerHTML = '<p style="text-align: center; padding: 2rem;">No activities yet for this category</p>';
+            } else {
+                const activityHtml = activities.map(a => `
+                    <div class="activity-modal-item">
+                        <div class="activity-modal-header">
+                            <strong>${a.action.replace(/_/g, ' ').toUpperCase()}</strong>
+                            <span class="activity-timestamp">${new Date(a.created_at).toLocaleString()}</span>
+                        </div>
+                    </div>
+                `).join('');
+                
+                document.getElementById('modalActivityBody').innerHTML = `<div class="activity-modal-list">${activityHtml}</div>`;
+            }
+        }
+        
+        function displayLeadsModal(leads) {
+            document.getElementById('modalActivityTitle').textContent = 'Leads';
+            
+            if (leads.length === 0) {
+                document.getElementById('modalActivityBody').innerHTML = '<p style="text-align: center; padding: 2rem;">No leads yet. <a href="/lead">Score your first lead</a></p>';
+            } else {
+                const leadHtml = leads.map(l => `
+                    <div class="activity-modal-item lead-modal-item" onclick="viewLeadDetails('${l._id}', event)">
+                        <div class="activity-modal-header">
+                            <div>
+                                <strong>${l.business_need} - ${l.budget}</strong>
+                                <p class="lead-subtitle-small">${l.industry} | ${l.authority}</p>
+                            </div>
+                            <span class="activity-timestamp">${new Date(l.created_at).toLocaleDateString()}</span>
+                        </div>
+                    </div>
+                `).join('');
+                
+                document.getElementById('modalActivityBody').innerHTML = `<div class="activity-modal-list">${leadHtml}</div>`;
+            }
+        }
+        
+        function closeActivityModal() {
+            document.getElementById('activityModal').style.display = 'none';
         }
         
         document.getElementById('logoutBtn').addEventListener('click', () => {
@@ -188,6 +303,259 @@
             localStorage.removeItem('user_id');
             localStorage.removeItem('email');
             window.location.href = '/login';
+        });
+
+        async function viewPitchFromHistory(pitchId, event) {
+            event.preventDefault();
+            event.stopPropagation();
+            const token = localStorage.getItem('token');
+            
+            try {
+                const response = await fetch(`/api/pitches/${pitchId}`, {
+                    headers: { 'Authorization': `Bearer ${token}` }
+                });
+                
+                if (response.ok) {
+                    const pitchData = await response.json();
+                    displayPitchModal(pitchData);
+                    document.getElementById('activityModal').style.display = 'none';
+                    document.getElementById('pitchViewModal').style.display = 'flex';
+                }
+            } catch (error) {
+                console.error('Error fetching pitch:', error);
+            }
+        }
+
+        async function viewCampaignDetails(campaignId, event) {
+            event.preventDefault();
+            event.stopPropagation();
+            const token = localStorage.getItem('token');
+            
+            try {
+                const response = await fetch(`/api/campaigns/${campaignId}`, {
+                    headers: { 'Authorization': `Bearer ${token}` }
+                });
+                
+                if (response.ok) {
+                    const campaignData = await response.json();
+                    displayCampaignDetail(campaignData);
+                    document.getElementById('activityModal').style.display = 'none';
+                    document.getElementById('pitchViewModal').style.display = 'flex';
+                }
+            } catch (error) {
+                console.error('Error fetching campaign:', error);
+            }
+        }
+
+        async function viewLeadDetails(leadId, event) {
+            event.preventDefault();
+            event.stopPropagation();
+            const token = localStorage.getItem('token');
+            
+            try {
+                const response = await fetch(`/api/leads/${leadId}`, {
+                    headers: { 'Authorization': `Bearer ${token}` }
+                });
+                
+                if (response.ok) {
+                    const leadData = await response.json();
+                    displayLeadDetail(leadData);
+                    document.getElementById('activityModal').style.display = 'none';
+                    document.getElementById('pitchViewModal').style.display = 'flex';
+                }
+            } catch (error) {
+                console.error('Error fetching lead:', error);
+            }
+        }
+
+        function displayPitchModal(pitchData) {
+            const modalTitle = `${pitchData.product} → ${pitchData.persona}`;
+            document.getElementById('modalPitchTitle').textContent = modalTitle;
+            
+            const pitch = pitchData.ai_output;
+            const modalBody = `
+                <div class="pitch-modal-content">
+                    <div class="pitch-info">
+                        <div class="info-row">
+                            <strong>Industry:</strong> <span>${pitchData.industry}</span>
+                        </div>
+                        <div class="info-row">
+                            <strong>Customer Type:</strong> <span>${pitchData.customer_type}</span>
+                        </div>
+                        <div class="info-row">
+                            <strong>Budget Preference:</strong> <span>${pitchData.budget_preference}</span>
+                        </div>
+                        <div class="info-row">
+                            <strong>Created:</strong> <span>${new Date(pitchData.created_at).toLocaleString()}</span>
+                        </div>
+                    </div>
+                    
+                    <hr class="section-divider">
+                    
+                    <div class="pitch-section">
+                        <h4>Elevator Pitch</h4>
+                        <p>${pitch.elevator_pitch}</p>
+                    </div>
+                    
+                    <div class="pitch-section">
+                        <h4>Value Proposition</h4>
+                        <p>${pitch.value_proposition}</p>
+                    </div>
+                    
+                    <div class="pitch-section">
+                        <h4>Key Differentiators</h4>
+                        <ul class="pitch-list">
+                            ${pitch.key_differentiators.map(d => `<li>${d}</li>`).join('')}
+                        </ul>
+                    </div>
+                    
+                    <div class="pitch-section">
+                        <h4>Call to Action</h4>
+                        <p>${pitch.personalized_cta}</p>
+                    </div>
+                </div>
+            `;
+            
+            document.getElementById('modalPitchBody').innerHTML = modalBody;
+        }
+
+        function displayCampaignDetail(campaignData) {
+            const modalTitle = `${campaignData.product} - ${campaignData.platform}`;
+            document.getElementById('modalPitchTitle').textContent = modalTitle;
+            
+            const campaign = campaignData.ai_output;
+            const ideas = campaign.campaign_ideas || [];
+            const ctas = campaign.cta_suggestions || [];
+            const calendar = campaign.content_calendar || [];
+            
+            const modalBody = `
+                <div class="pitch-modal-content">
+                    <div class="pitch-info">
+                        <div class="info-row">
+                            <strong>Platform:</strong> <span>${campaignData.platform}</span>
+                        </div>
+                        <div class="info-row">
+                            <strong>Industry:</strong> <span>${campaignData.industry}</span>
+                        </div>
+                        <div class="info-row">
+                            <strong>Audience:</strong> <span>${campaignData.audience}</span>
+                        </div>
+                        <div class="info-row">
+                            <strong>Created:</strong> <span>${new Date(campaignData.created_at).toLocaleString()}</span>
+                        </div>
+                    </div>
+                    
+                    <hr class="section-divider">
+                    
+                    <div class="pitch-section">
+                        <h4>Campaign Ideas</h4>
+                        ${ideas.length > 0 ? ideas.map(idea => `
+                            <div style="margin-bottom: 1rem; padding: 0.75rem; background: var(--bg-tertiary); border-radius: 0.5rem;">
+                                <strong>${idea.title}</strong>
+                                <p style="margin: 0.5rem 0 0 0; color: #cbd5e1;">${idea.description}</p>
+                            </div>
+                        `).join('') : '<p>No campaign ideas</p>'}
+                    </div>
+                    
+                    <hr class="section-divider">
+                    
+                    <div class="pitch-section">
+                        <h4>Call to Actions</h4>
+                        ${ctas.length > 0 ? ctas.map(cta => `
+                            <div style="margin-bottom: 0.75rem; padding: 0.75rem; background: var(--bg-tertiary); border-radius: 0.5rem;">
+                                <strong>${cta.cta_text}</strong>
+                                <p style="margin: 0.25rem 0 0 0; font-size: 0.875rem; color: #cbd5e1;">${cta.description}</p>
+                            </div>
+                        `).join('') : '<p>No CTAs</p>'}
+                    </div>
+                    
+                    <hr class="section-divider">
+                    
+                    <div class="pitch-section">
+                        <h4>Content Calendar (7 Days)</h4>
+                        ${calendar.length > 0 ? calendar.map(day => `
+                            <div style="margin-bottom: 0.75rem; padding: 0.75rem; background: var(--bg-tertiary); border-radius: 0.5rem;">
+                                <strong>Day ${day.day} - ${day.post_type}</strong>
+                                <p style="margin: 0.25rem 0 0 0; font-size: 0.875rem; color: #cbd5e1;">${day.content_idea}</p>
+                                <p style="margin: 0.25rem 0 0 0; font-size: 0.8rem; color: #64748b;">Best Time: ${day.best_time}</p>
+                            </div>
+                        `).join('') : '<p>No calendar data</p>'}
+                    </div>
+                </div>
+            `;
+            
+            document.getElementById('modalPitchBody').innerHTML = modalBody;
+        }
+
+        function displayLeadDetail(leadData) {
+            const modalTitle = `Lead - ${leadData.business_need}`;
+            document.getElementById('modalPitchTitle').textContent = modalTitle;
+            
+            const leadAI = leadData.ai_output || {};
+            
+            const modalBody = `
+                <div class="pitch-modal-content">
+                    <div class="pitch-info">
+                        <div class="info-row">
+                            <strong>Business Need:</strong> <span>${leadData.business_need}</span>
+                        </div>
+                        <div class="info-row">
+                            <strong>Budget:</strong> <span>${leadData.budget}</span>
+                        </div>
+                        <div class="info-row">
+                            <strong>Industry:</strong> <span>${leadData.industry}</span>
+                        </div>
+                        <div class="info-row">
+                            <strong>Urgency:</strong> <span>${leadData.urgency}</span>
+                        </div>
+                        <div class="info-row">
+                            <strong>Authority:</strong> <span>${leadData.authority}</span>
+                        </div>
+                        <div class="info-row">
+                            <strong>Created:</strong> <span>${new Date(leadData.created_at).toLocaleString()}</span>
+                        </div>
+                    </div>
+                    
+                    <hr class="section-divider">
+                    
+                    <div class="pitch-section">
+                        <h4>Lead Quality Score</h4>
+                        <div style="padding: 1.5rem; background: var(--bg-tertiary); border-radius: 0.5rem; text-align: center;">
+                            <div style="font-size: 2.5rem; font-weight: bold; color: var(--primary); margin-bottom: 0.5rem;">
+                                ${leadAI.lead_quality_score || 'N/A'}%
+                            </div>
+                            <p style="margin: 0; color: #cbd5e1;">${leadAI.overall_assessment || 'Assessment pending'}</p>
+                        </div>
+                    </div>
+                    
+                    <hr class="section-divider">
+                    
+                    <div class="pitch-section">
+                        <h4>Reasoning</h4>
+                        <p>${leadAI.reasoning || 'No reasoning provided'}</p>
+                    </div>
+                    
+                    <div class="pitch-section">
+                        <h4>Recommended Next Steps</h4>
+                        <p>${leadAI.recommended_next_steps || 'No recommendations'}</p>
+                    </div>
+                </div>
+            `;
+            
+            document.getElementById('modalPitchBody').innerHTML = modalBody;
+        }
+
+        // Close modals when clicking outside of them
+        window.addEventListener('click', (event) => {
+            const pitchModal = document.getElementById('pitchViewModal');
+            const activityModal = document.getElementById('activityModal');
+            
+            if (event.target === pitchModal) {
+                pitchModal.style.display = 'none';
+            }
+            if (event.target === activityModal) {
+                activityModal.style.display = 'none';
+            }
         });
     </script>
 </body>
