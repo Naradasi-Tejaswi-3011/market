@@ -90,6 +90,52 @@
             
             <!-- Output Results -->
             <div class="results-section">
+                <div id="toolDescription" class="tool-description">
+                    <h3>AI Campaign Generator</h3>
+                    <p>Generate comprehensive marketing campaigns powered by AI in seconds.</p>
+                    
+                    <div class="feature-list">
+                        <div class="feature-item">
+                            <span class="feature-icon">💡</span>
+                            <div>
+                                <strong>Campaign Ideas</strong>
+                                <p>Get 5 creative campaign concepts tailored to your platform</p>
+                            </div>
+                        </div>
+                        <div class="feature-item">
+                            <span class="feature-icon">🎯</span>
+                            <div>
+                                <strong>Call to Actions</strong>
+                                <p>Conversion-optimized CTAs with usage recommendations</p>
+                            </div>
+                        </div>
+                        <div class="feature-item">
+                            <span class="feature-icon">📅</span>
+                            <div>
+                                <strong>Content Calendar</strong>
+                                <p>7-day posting schedule with optimal timing</p>
+                            </div>
+                        </div>
+                        <div class="feature-item">
+                            <span class="feature-icon">🔍</span>
+                            <div>
+                                <strong>Competitor Analysis</strong>
+                                <p>Market insights and differentiation strategies</p>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="how-it-works">
+                        <h4>How It Works</h4>
+                        <ol>
+                            <li>Enter your product details and target audience</li>
+                            <li>Select your marketing platform</li>
+                            <li>Choose your industry</li>
+                            <li>Click Generate and get instant AI-powered insights</li>
+                        </ol>
+                    </div>
+                </div>
+                
                 <div id="loadingSpinner" class="spinner" style="display: none;">
                     <div class="spinner-content">
                         <div class="spinner-circle"></div>
@@ -104,7 +150,8 @@
                     <div class="tab-navigation">
                         <button class="tab-btn active" data-tab="ideas">Campaign Ideas</button>
                         <button class="tab-btn" data-tab="cta">Call to Actions</button>
-                        <button class="tab-btn" data-tab="posters">Poster Designs</button>
+                        <button class="tab-btn" data-tab="calendar">Content Calendar</button>
+                        <button class="tab-btn" data-tab="competitor">Competitor Analysis</button>
                     </div>
                     
                     <!-- Tab Content -->
@@ -123,10 +170,17 @@
                             </div>
                         </div>
                         
-                        <div class="tab-content" id="tab-posters">
+                        <div class="tab-content" id="tab-calendar">
                             <div class="output-card">
-                                <h4>5 Poster Design Concepts</h4>
-                                <div id="posterDesigns"></div>
+                                <h4>7-Day Content Calendar</h4>
+                                <div id="contentCalendar"></div>
+                            </div>
+                        </div>
+                        
+                        <div class="tab-content" id="tab-competitor">
+                            <div class="output-card">
+                                <h4>Competitor Analysis</h4>
+                                <div id="competitorAnalysis"></div>
                             </div>
                         </div>
                     </div>
@@ -136,7 +190,7 @@
                     </button>
                 </div>
                 
-                <div id="previousCampaigns" class="previous-outputs">
+                <div id="previousCampaigns" class="previous-outputs" style="display: none;">
                     <h4>Previous Campaigns</h4>
                     <div id="campaignList" class="output-list"></div>
                 </div>
@@ -184,6 +238,7 @@
                 document.getElementById('loadingSpinner').style.display = 'none';
                 
                 if (response.ok) {
+                    document.getElementById('toolDescription').style.display = 'none';
                     displayCampaignOutput(data.campaign);
                     currentCampaignId = data.campaign_id;
                     await loadCampaigns();
@@ -227,36 +282,46 @@
                     </div>
                 `).join('');
             
-            // Display Poster Designs
-            document.getElementById('posterDesigns').innerHTML = campaign.poster_designs
-                .map((poster, i) => `
-                    <div class="poster-item">
-                        <div class="poster-header">
-                            <span class="poster-number">Design ${i+1}</span>
-                            <h5>${poster.design_concept}</h5>
-                        </div>
-                        <div class="poster-content">
-                            <div class="poster-section">
-                                <strong>Visual Description:</strong>
-                                <p>${poster.visual_description}</p>
+            // Display Content Calendar
+            document.getElementById('contentCalendar').innerHTML = `
+                <div class="calendar-grid">
+                    ${campaign.content_calendar.map(day => `
+                        <div class="calendar-day">
+                            <div class="day-header">
+                                <span class="day-number">Day ${day.day}</span>
+                                <span class="post-type">${day.post_type}</span>
                             </div>
-                            <div class="poster-text-preview">
-                                <div class="poster-headline">${poster.headline_text}</div>
-                                <div class="poster-subheadline">${poster.subheadline_text}</div>
-                            </div>
-                            <div class="poster-details">
-                                <div class="poster-detail-item">
-                                    <strong>Color Scheme:</strong>
-                                    <p>${poster.color_scheme}</p>
-                                </div>
-                                <div class="poster-detail-item">
-                                    <strong>Design Elements:</strong>
-                                    <p>${poster.design_elements}</p>
-                                </div>
+                            <div class="day-content">
+                                <p>${day.content_idea}</p>
+                                <span class="best-time">Best Time: ${day.best_time}</span>
                             </div>
                         </div>
-                    </div>
-                `).join('');
+                    `).join('')}
+                </div>
+            `;
+            
+            // Display Competitor Analysis
+            const competitor = campaign.competitor_analysis;
+            document.getElementById('competitorAnalysis').innerHTML = `
+                <div class="analysis-block">
+                    <h5>Common Competitor Strategies</h5>
+                    <ul class="analysis-list">
+                        ${competitor.common_strategies.map(s => `<li>${s}</li>`).join('')}
+                    </ul>
+                </div>
+                <div class="analysis-block">
+                    <h5>Gaps & Opportunities</h5>
+                    <ul class="analysis-list opportunities">
+                        ${competitor.gaps_opportunities.map(g => `<li>${g}</li>`).join('')}
+                    </ul>
+                </div>
+                <div class="analysis-block">
+                    <h5>Differentiation Tactics</h5>
+                    <ul class="analysis-list tactics">
+                        ${competitor.differentiation_tactics.map(t => `<li>${t}</li>`).join('')}
+                    </ul>
+                </div>
+            `;
             
             document.getElementById('campaignOutput').style.display = 'block';
         }

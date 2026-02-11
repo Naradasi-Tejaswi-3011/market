@@ -51,55 +51,28 @@ Return ONLY valid JSON (no markdown, no code blocks) with this exact structure:
     {{"cta_text": "Call to Action 4", "description": "When and why to use this CTA"}},
     {{"cta_text": "Call to Action 5", "description": "When and why to use this CTA"}}
   ],
-  "poster_designs": [
-    {{
-      "design_concept": "Poster Design 1 Title",
-      "visual_description": "Detailed description of the poster layout, colors, imagery, text placement",
-      "headline_text": "Main headline for the poster",
-      "subheadline_text": "Supporting text or tagline",
-      "color_scheme": "Primary and secondary colors to use",
-      "design_elements": "Key visual elements, icons, or graphics to include"
-    }},
-    {{
-      "design_concept": "Poster Design 2 Title",
-      "visual_description": "Detailed description of the poster layout, colors, imagery, text placement",
-      "headline_text": "Main headline for the poster",
-      "subheadline_text": "Supporting text or tagline",
-      "color_scheme": "Primary and secondary colors to use",
-      "design_elements": "Key visual elements, icons, or graphics to include"
-    }},
-    {{
-      "design_concept": "Poster Design 3 Title",
-      "visual_description": "Detailed description of the poster layout, colors, imagery, text placement",
-      "headline_text": "Main headline for the poster",
-      "subheadline_text": "Supporting text or tagline",
-      "color_scheme": "Primary and secondary colors to use",
-      "design_elements": "Key visual elements, icons, or graphics to include"
-    }},
-    {{
-      "design_concept": "Poster Design 4 Title",
-      "visual_description": "Detailed description of the poster layout, colors, imagery, text placement",
-      "headline_text": "Main headline for the poster",
-      "subheadline_text": "Supporting text or tagline",
-      "color_scheme": "Primary and secondary colors to use",
-      "design_elements": "Key visual elements, icons, or graphics to include"
-    }},
-    {{
-      "design_concept": "Poster Design 5 Title",
-      "visual_description": "Detailed description of the poster layout, colors, imagery, text placement",
-      "headline_text": "Main headline for the poster",
-      "subheadline_text": "Supporting text or tagline",
-      "color_scheme": "Primary and secondary colors to use",
-      "design_elements": "Key visual elements, icons, or graphics to include"
-    }}
-  ]
+  "content_calendar": [
+    {{"day": 1, "post_type": "Educational/Promotional/Engagement", "content_idea": "Specific post idea", "best_time": "9 AM"}},
+    {{"day": 2, "post_type": "Educational/Promotional/Engagement", "content_idea": "Specific post idea", "best_time": "12 PM"}},
+    {{"day": 3, "post_type": "Educational/Promotional/Engagement", "content_idea": "Specific post idea", "best_time": "3 PM"}},
+    {{"day": 4, "post_type": "Educational/Promotional/Engagement", "content_idea": "Specific post idea", "best_time": "10 AM"}},
+    {{"day": 5, "post_type": "Educational/Promotional/Engagement", "content_idea": "Specific post idea", "best_time": "1 PM"}},
+    {{"day": 6, "post_type": "Educational/Promotional/Engagement", "content_idea": "Specific post idea", "best_time": "11 AM"}},
+    {{"day": 7, "post_type": "Educational/Promotional/Engagement", "content_idea": "Specific post idea", "best_time": "2 PM"}}
+  ],
+  "competitor_analysis": {{
+    "common_strategies": ["Strategy 1 competitors use", "Strategy 2 competitors use", "Strategy 3 competitors use"],
+    "gaps_opportunities": ["Gap 1 you can exploit", "Gap 2 you can exploit", "Gap 3 you can exploit"],
+    "differentiation_tactics": ["How to stand out 1", "How to stand out 2", "How to stand out 3"]
+  }}
 }}
 
 IMPORTANT:
-- Campaign ideas should be specific to {platform} platform
-- CTAs should be action-oriented and conversion-focused
-- Poster designs should be platform-appropriate (e.g., square for Instagram, landscape for LinkedIn)
-- Keep language professional and {tone}
+- Campaign ideas specific to {platform}
+- CTAs action-oriented
+- Hashtags relevant to {industry} and trending on {platform}
+- Content calendar with 7 days (can be repeated for 30 days)
+- Competitor analysis based on {industry} standards
 
 CRITICAL: Return ONLY the JSON object, nothing else."""
 

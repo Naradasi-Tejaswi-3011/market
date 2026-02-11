@@ -41,6 +41,7 @@ body {
     background-color: var(--bg-primary);
     color: var(--text-primary);
     line-height: 1.6;
+    overflow-x: hidden;
 }
 
 /* ============= TYPOGRAPHY ============= */
@@ -515,6 +516,8 @@ textarea:focus {
     padding: 2.5rem;
     box-shadow: var(--shadow-lg);
     border: 1px solid var(--border);
+    overflow-x: hidden;
+    max-width: 100%;
 }
 
 /* ============= LOADING SPINNER ============= */
@@ -552,6 +555,8 @@ textarea:focus {
     border-radius: 1rem;
     padding: 2rem;
     margin-bottom: 2rem;
+    overflow-x: hidden;
+    word-wrap: break-word;
 }
 
 .output-card h4 {
@@ -1147,23 +1152,25 @@ textarea:focus {
     gap: 0.5rem;
     margin-bottom: 2rem;
     border-bottom: 2px solid var(--border);
-    overflow-x: auto;
     padding-bottom: 0;
+    justify-content: space-between;
 }
 
 .tab-btn {
-    padding: 1rem 2rem;
+    padding: 0.75rem 1rem;
     background: transparent;
     border: none;
     color: var(--text-secondary);
     font-weight: 600;
-    font-size: 0.95rem;
+    font-size: 0.85rem;
     cursor: pointer;
     transition: all 0.3s;
     border-bottom: 3px solid transparent;
     white-space: nowrap;
     position: relative;
     bottom: -2px;
+    flex: 1;
+    text-align: center;
 }
 
 .tab-btn:hover {
@@ -1309,129 +1316,303 @@ textarea:focus {
     line-height: 1.6;
 }
 
-/* ============= POSTER ITEMS ============= */
+/* ============= HASHTAG SUGGESTIONS ============= */
 
-.poster-item {
-    background: var(--bg-secondary);
-    border-radius: 1rem;
+.hashtag-section {
     margin-bottom: 2rem;
+}
+
+.hashtag-section h5 {
+    color: var(--text-primary);
+    margin-bottom: 1rem;
+    font-size: 1.1rem;
+}
+
+.hashtag-list {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.75rem;
+}
+
+.hashtag-tag {
+    padding: 0.5rem 1rem;
+    border-radius: 2rem;
+    font-weight: 600;
+    font-size: 0.9rem;
+    cursor: pointer;
+    transition: all 0.3s;
+}
+
+.hashtag-tag.trending {
+    background: rgba(239, 68, 68, 0.1);
+    color: #fca5a5;
+    border: 1px solid rgba(239, 68, 68, 0.3);
+}
+
+.hashtag-tag.branded {
+    background: rgba(129, 140, 248, 0.1);
+    color: var(--primary);
+    border: 1px solid rgba(129, 140, 248, 0.3);
+}
+
+.hashtag-tag.niche {
+    background: rgba(16, 185, 129, 0.1);
+    color: #6ee7b7;
+    border: 1px solid rgba(16, 185, 129, 0.3);
+}
+
+.hashtag-tag:hover {
+    transform: translateY(-2px);
+    box-shadow: var(--shadow-md);
+}
+
+.hashtag-tips {
+    background: var(--bg-tertiary);
+    padding: 1.5rem;
+    border-radius: 0.75rem;
+    border-left: 4px solid var(--info);
+    margin-top: 1.5rem;
+}
+
+.hashtag-tips strong {
+    display: block;
+    color: var(--primary-light);
+    margin-bottom: 0.5rem;
+}
+
+.hashtag-tips p {
+    color: var(--text-secondary);
+    margin: 0;
+}
+
+/* ============= CONTENT CALENDAR ============= */
+
+.calendar-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+    gap: 1.5rem;
+}
+
+.calendar-day {
+    background: var(--bg-secondary);
+    border-radius: 0.75rem;
     border: 1px solid var(--border);
     overflow: hidden;
     transition: all 0.3s;
 }
 
-.poster-item:hover {
+.calendar-day:hover {
     border-color: var(--primary);
+    transform: translateY(-5px);
     box-shadow: var(--shadow-lg);
 }
 
-.poster-header {
+.day-header {
     background: var(--bg-tertiary);
-    padding: 1.5rem;
-    border-bottom: 1px solid var(--border);
+    padding: 1rem;
     display: flex;
+    justify-content: space-between;
     align-items: center;
-    gap: 1rem;
+    border-bottom: 1px solid var(--border);
 }
 
-.poster-number {
+.day-number {
+    font-weight: 700;
+    color: var(--primary);
+    font-size: 1rem;
+}
+
+.post-type {
     background: var(--primary);
     color: white;
-    padding: 0.5rem 1rem;
-    border-radius: 2rem;
+    padding: 0.25rem 0.75rem;
+    border-radius: 1rem;
+    font-size: 0.75rem;
     font-weight: 600;
-    font-size: 0.85rem;
 }
 
-.poster-header h5 {
-    color: var(--text-primary);
-    margin: 0;
-    font-size: 1.2rem;
+.day-content {
+    padding: 1.25rem;
 }
 
-.poster-content {
-    padding: 1.5rem;
-}
-
-.poster-section {
-    margin-bottom: 1.5rem;
-}
-
-.poster-section strong {
-    display: block;
-    color: var(--primary-light);
-    margin-bottom: 0.5rem;
-    font-size: 0.9rem;
-}
-
-.poster-section p {
+.day-content p {
     color: var(--text-secondary);
-    margin: 0;
+    margin-bottom: 1rem;
     line-height: 1.6;
 }
 
-.poster-text-preview {
-    background: var(--bg-tertiary);
-    padding: 2rem;
-    border-radius: 0.75rem;
-    text-align: center;
-    margin-bottom: 1.5rem;
-    border: 2px dashed var(--border);
-}
-
-.poster-headline {
-    font-size: 1.5rem;
-    font-weight: 700;
-    color: var(--text-primary);
-    margin-bottom: 0.75rem;
-    line-height: 1.3;
-}
-
-.poster-subheadline {
-    font-size: 1rem;
-    color: var(--text-secondary);
-    font-style: italic;
-}
-
-.poster-details {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 1rem;
-}
-
-.poster-detail-item {
-    background: var(--bg-tertiary);
-    padding: 1rem;
+.best-time {
+    display: inline-block;
+    background: rgba(16, 185, 129, 0.1);
+    color: var(--secondary);
+    padding: 0.35rem 0.75rem;
     border-radius: 0.5rem;
+    font-size: 0.85rem;
+    font-weight: 600;
+}
+
+/* ============= COMPETITOR ANALYSIS ============= */
+
+.analysis-block {
+    background: var(--bg-secondary);
+    padding: 1.5rem;
+    border-radius: 0.75rem;
+    margin-bottom: 1.5rem;
     border: 1px solid var(--border);
 }
 
-.poster-detail-item strong {
-    display: block;
-    color: var(--primary-light);
-    margin-bottom: 0.5rem;
-    font-size: 0.85rem;
+.analysis-block h5 {
+    color: var(--text-primary);
+    margin-bottom: 1rem;
+    font-size: 1.1rem;
 }
 
-.poster-detail-item p {
+.analysis-list {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+
+.analysis-list li {
+    background: var(--bg-tertiary);
+    padding: 1rem;
+    border-radius: 0.5rem;
+    margin-bottom: 0.75rem;
+    color: var(--text-secondary);
+    border-left: 4px solid var(--primary);
+    line-height: 1.6;
+}
+
+.analysis-list.opportunities li {
+    border-left-color: var(--secondary);
+}
+
+.analysis-list.tactics li {
+    border-left-color: var(--info);
+}
+
+@media (max-width: 768px) {
+    .calendar-grid {
+        grid-template-columns: 1fr;
+    }
+}
+
+/* ============= SLOGAN ITEMS ============= */
+
+.slogan-list {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+}
+
+.slogan-item {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    background: var(--bg-secondary);
+    padding: 1.25rem;
+    border-radius: 0.75rem;
+    border: 1px solid var(--border);
+    transition: all 0.3s;
+}
+
+.slogan-item:hover {
+    border-color: var(--primary);
+    transform: translateX(5px);
+}
+
+.slogan-number {
+    width: 35px;
+    height: 35px;
+    background: var(--gradient-primary);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 700;
+    color: white;
+    flex-shrink: 0;
+}
+
+.slogan-text {
+    color: var(--text-primary);
+    font-size: 1.05rem;
+    font-weight: 600;
+    font-style: italic;
+}
+
+/* ============= TOOL DESCRIPTION ============= */
+
+.tool-description {
+    padding: 2rem 0;
+}
+
+.tool-description h3 {
+    color: var(--text-primary);
+    margin-bottom: 0.5rem;
+    font-size: 1.8rem;
+}
+
+.tool-description > p {
+    color: var(--text-secondary);
+    margin-bottom: 2rem;
+    font-size: 1.05rem;
+}
+
+.feature-list {
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+    margin-bottom: 2rem;
+}
+
+.feature-item {
+    display: flex;
+    gap: 1rem;
+    align-items: flex-start;
+    background: var(--bg-tertiary);
+    padding: 1.25rem;
+    border-radius: 0.75rem;
+    border: 1px solid var(--border);
+}
+
+.feature-icon {
+    font-size: 2rem;
+    flex-shrink: 0;
+}
+
+.feature-item strong {
+    display: block;
+    color: var(--text-primary);
+    margin-bottom: 0.25rem;
+    font-size: 1rem;
+}
+
+.feature-item p {
     color: var(--text-secondary);
     margin: 0;
     font-size: 0.9rem;
 }
 
-@media (max-width: 768px) {
-    .campaign-idea-item,
-    .cta-item {
-        flex-direction: column;
-        gap: 1rem;
-    }
-    
-    .poster-details {
-        grid-template-columns: 1fr;
-    }
-    
-    .poster-header {
-        flex-direction: column;
-        align-items: flex-start;
-    }
+.how-it-works {
+    background: var(--bg-tertiary);
+    padding: 1.5rem;
+    border-radius: 0.75rem;
+    border-left: 4px solid var(--primary);
+}
+
+.how-it-works h4 {
+    color: var(--text-primary);
+    margin-bottom: 1rem;
+}
+
+.how-it-works ol {
+    margin: 0;
+    padding-left: 1.5rem;
+    color: var(--text-secondary);
+}
+
+.how-it-works ol li {
+    margin-bottom: 0.5rem;
+    line-height: 1.6;
 }
