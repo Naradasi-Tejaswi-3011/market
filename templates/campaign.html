@@ -490,6 +490,10 @@
         document.addEventListener('DOMContentLoaded', () => {
             loadCampaigns();
             
+            // Attach form submit handler
+            document.getElementById('campaignForm').addEventListener('submit', generateCampaign);
+            document.getElementById('logoutBtn').addEventListener('click', logout);
+            
             // Tab switching functionality
             const tabBtns = document.querySelectorAll('.tab-btn');
             const tabContents = document.querySelectorAll('.tab-content');

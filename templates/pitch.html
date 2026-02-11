@@ -40,17 +40,20 @@
 
                     <div>
                         <label for="industry">Industry *</label>
-                        <input type="text" id="industry" name="industry" placeholder="e.g., EdTech, Healthcare" required>
+                        <input type="text" id="industry" name="industry" placeholder="e.g., EdTech, Healthcare"
+                            required>
                     </div>
 
                     <div>
                         <label for="description">Product Description *</label>
-                        <textarea id="description" name="description" placeholder="Describe your product and its key features" rows="4" required></textarea>
+                        <textarea id="description" name="description"
+                            placeholder="Describe your product and its key features" rows="4" required></textarea>
                     </div>
 
                     <div>
                         <label for="persona">Customer Persona *</label>
-                        <input type="text" id="persona" name="persona" placeholder="e.g., CTO of mid-sized tech company" required>
+                        <input type="text" id="persona" name="persona" placeholder="e.g., CTO of mid-sized tech company"
+                            required>
                     </div>
 
                     <div class="form-row">
@@ -79,6 +82,15 @@
                         </div>
                     </div>
 
+                    <div>
+                        <label for="language">OUTPUT LANGUAGE *</label>
+                        <select id="language" name="language" required>
+                            <option value="English">English</option>
+                            <option value="Hindi">Hindi</option>
+                            <option value="Telugu">Telugu</option>
+                        </select>
+                    </div>
+
                     <button type="submit" class="btn btn-primary btn-block">
                         Generate Pitch
                     </button>
@@ -92,7 +104,7 @@
                 <div id="toolDescription" class="tool-description">
                     <h3>AI Pitch Generator</h3>
                     <p>Generate personalized sales pitches powered by AI instantly.</p>
-                    
+
                     <div class="feature-list">
                         <div class="feature-item">
                             <span class="feature-icon">💬</span>
@@ -123,7 +135,7 @@
                             </div>
                         </div>
                     </div>
-                    
+
                     <div class="how-it-works">
                         <h4>How It Works</h4>
                         <ol>
@@ -233,10 +245,12 @@
             </div>
             <textarea id="feedbackDetails" class="feedback-details" placeholder="Share details (optional)"></textarea>
             <div class="modal-disclaimer">
-                Your conversation will be included with your feedback to help improve MarketAI. <a href="#">Learn more</a>
+                Your conversation will be included with your feedback to help improve MarketAI. <a href="#">Learn
+                    more</a>
             </div>
             <div class="modal-footer">
-                <button id="submitDetailedFeedback" class="btn-submit-feedback" onclick="submitDetailedFeedback()" disabled>Submit</button>
+                <button id="submitDetailedFeedback" class="btn-submit-feedback" onclick="submitDetailedFeedback()"
+                    disabled>Submit</button>
             </div>
         </div>
     </div>
@@ -264,6 +278,7 @@
 
             document.getElementById('loadingSpinner').style.display = 'flex';
             document.getElementById('pitchOutput').style.display = 'none';
+            document.getElementById('toolDescription').style.display = 'none';
             document.getElementById('formMessage').textContent = '';
 
             try {
@@ -328,7 +343,7 @@
 
         async function handleFeedback(isPositive) {
             if (!currentPitchId) return;
-            
+
             if (isPositive) {
                 await submitFeedback(true);
                 document.getElementById('feedbackMsg').style.display = 'block';
@@ -374,9 +389,9 @@
             const selectedChips = document.querySelectorAll('.reason-chip.selected');
             const reasons = Array.from(selectedChips).map(c => c.textContent);
             const details = document.getElementById('feedbackDetails').value;
-            
+
             await submitFeedback(false, reasons, details);
-            
+
             closeFeedbackModal();
             document.getElementById('feedbackMsg').style.display = 'block';
             document.getElementById('feedbackMsg').textContent = 'Thank you for your detailed feedback!';
@@ -388,7 +403,7 @@
 
         async function submitFeedback(isPositive, reasons = [], details = '') {
             const token = localStorage.getItem('token');
-            
+
             try {
                 const response = await fetch('/api/feedback', {
                     method: 'POST',
@@ -404,7 +419,7 @@
                         details: details
                     })
                 });
-                
+
                 return response.ok;
             } catch (error) {
                 console.error('Error submitting feedback:', error);
@@ -442,6 +457,7 @@
             const token = localStorage.getItem('token');
             document.getElementById('loadingSpinner').style.display = 'flex';
             document.getElementById('pitchOutput').style.display = 'none';
+            document.getElementById('toolDescription').style.display = 'none';
 
             try {
                 const response = await fetch(`/api/pitches/${pitchId}`, {
@@ -477,7 +493,6 @@
             }
         }
 
-        let currentPitchId = null;
 
         document.addEventListener('DOMContentLoaded', () => {
             document.getElementById('savePitchBtn').addEventListener('click', () => {
