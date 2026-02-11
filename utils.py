@@ -66,6 +66,45 @@ def save_lead_to_db(user_id, budget, business_need, urgency, authority, industry
     return str(result.inserted_id)
 
 
+def save_feedback_to_db(user_id, item_id, item_type, rating, reasons=None, details=None):
+    """Save feedback to MongoDB"""
+    from models import Feedback
+    db = get_db()
+    
+    # Check if feedback already exists for this item by this user
+    existing = db.feedbacks.find_one({
+        'user_id': ObjectId(user_id),
+        'item_id': ObjectId(item_id)
+    })
+    
+    update_data = {
+        'rating': rating,
+        'reasons': reasons or [],
+        'details': details,
+        'created_at': datetime.utcnow()
+    }
+    
+    if existing:
+        db.feedbacks.update_one(
+            {'_id': existing['_id']},
+            {'$set': update_data}
+        )
+        return str(existing['_id'])
+    
+    feedback = Feedback(ObjectId(user_id), ObjectId(item_id), item_type, rating, reasons, details)
+    result = db.feedbacks.insert_one(feedback.to_dict())
+    
+    log_activity(ObjectId(user_id), 'feedback_submitted', {
+        'item_id': item_id,
+        'item_type': item_type,
+        'rating': rating,
+        'reasons': reasons,
+        'details': details
+    })
+    
+    return str(result.inserted_id)
+
+
 def get_user_campaigns(user_id, limit=10):
     """Get user's campaigns from database"""
     db = get_db()

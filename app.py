@@ -12,7 +12,7 @@ from utils import (
     save_campaign_to_db, save_pitch_to_db, save_lead_to_db,
     get_user_campaigns, get_user_pitches, get_user_leads,
     get_campaign_by_id, get_pitch_by_id, get_lead_by_id,
-    get_user_activity
+    get_user_activity, save_feedback_to_db
 )
 
 load_dotenv()
@@ -267,6 +267,41 @@ def get_lead(lead_id):
         return jsonify({'error': 'Unauthorized'}), 403
     
     return jsonify(lead), 200
+
+
+# ============= FEEDBACK ROUTES =============
+
+@app.route('/api/feedback', methods=['POST'])
+@jwt_required()
+def submit_feedback():
+    """Submit feedback for AI generated content"""
+    user_id = get_jwt_identity()
+    data = request.get_json()
+    
+    content_id = data.get('content_id')
+    content_type = data.get('content_type') # 'campaign', 'pitch', 'lead'
+    is_positive = data.get('is_positive') # True for Up, False for Down
+    reasons = data.get('reasons', [])
+    details = data.get('details', '')
+    
+    if content_id is None or content_type is None or is_positive is None:
+        return jsonify({'error': 'Missing required fields'}), 400
+    
+    rating = 1 if is_positive else -1
+    
+    feedback_id = save_feedback_to_db(
+        ObjectId(user_id),
+        content_id,
+        content_type,
+        rating,
+        reasons,
+        details
+    )
+    
+    return jsonify({
+        'feedback_id': feedback_id,
+        'message': 'Feedback submitted successfully'
+    }), 201
 
 
 # ============= ACTIVITY ROUTES =============
