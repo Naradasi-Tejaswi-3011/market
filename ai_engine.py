@@ -25,52 +25,88 @@ def generate_campaign(product_desc, audience, platform, industry):
     
     tone = INDUSTRY_TONES.get(industry, 'professional and engaging')
     
-    prompt = f"""You are an expert marketing strategist. Generate a data-driven marketing campaign with complete reasoning.
+    prompt = f"""You are an expert AI Marketing Strategist specialized in digital campaigns.
 
-INPUTS:
-- Product: {product_desc}
-- Target Audience: {audience}
-- Platform: {platform}
-- Industry: {industry}
-- Tone: {tone}
+Generate a marketing campaign plan for {platform} platform.
+
+INPUT DETAILS:
+Product/Service: {product_desc}
+Industry: {industry}
+Target Audience: {audience}
+Platform: {platform}
 
 Return ONLY valid JSON (no markdown, no code blocks) with this exact structure:
 {{
-  "campaign_objective": "One clear, measurable objective",
-  "content_ideas": [
-    {{"title": "...", "description": "..."}},
-    {{"title": "...", "description": "..."}},
-    {{"title": "...", "description": "..."}}
+  "campaign_ideas": [
+    {{"title": "Campaign Idea 1", "description": "2-3 lines describing the campaign idea"}},
+    {{"title": "Campaign Idea 2", "description": "2-3 lines describing the campaign idea"}},
+    {{"title": "Campaign Idea 3", "description": "2-3 lines describing the campaign idea"}},
+    {{"title": "Campaign Idea 4", "description": "2-3 lines describing the campaign idea"}},
+    {{"title": "Campaign Idea 5", "description": "2-3 lines describing the campaign idea"}}
   ],
-  "ad_copy_variants": [
-    {{"headline": "...", "description": "..."}},
-    {{"headline": "...", "description": "..."}},
-    {{"headline": "...", "description": "..."}}
+  "cta_suggestions": [
+    {{"cta_text": "Call to Action 1", "description": "When and why to use this CTA"}},
+    {{"cta_text": "Call to Action 2", "description": "When and why to use this CTA"}},
+    {{"cta_text": "Call to Action 3", "description": "When and why to use this CTA"}},
+    {{"cta_text": "Call to Action 4", "description": "When and why to use this CTA"}},
+    {{"cta_text": "Call to Action 5", "description": "When and why to use this CTA"}}
   ],
-  "cta_suggestions": ["CTA1", "CTA2", "CTA3"],
-  "posting_strategy": "Specific timing, frequency, and cadence",
-  "roi_estimate": "X-Y% projected increase",
-  "conversion_probability": "X% estimated conversion rate",
-  "reasoning": {{
-    "objective_why": "Why this objective for this audience",
-    "content_strategy": "Why these content ideas work",
-    "platform_fit": "Why {platform} is ideal for {audience}",
-    "industry_considerations": "How {industry} dynamics inform this",
-    "success_metrics": "How to measure success"
-  }},
-  "recommended_next_actions": [
-    "Action 1",
-    "Action 2",
-    "Action 3"
+  "poster_designs": [
+    {{
+      "design_concept": "Poster Design 1 Title",
+      "visual_description": "Detailed description of the poster layout, colors, imagery, text placement",
+      "headline_text": "Main headline for the poster",
+      "subheadline_text": "Supporting text or tagline",
+      "color_scheme": "Primary and secondary colors to use",
+      "design_elements": "Key visual elements, icons, or graphics to include"
+    }},
+    {{
+      "design_concept": "Poster Design 2 Title",
+      "visual_description": "Detailed description of the poster layout, colors, imagery, text placement",
+      "headline_text": "Main headline for the poster",
+      "subheadline_text": "Supporting text or tagline",
+      "color_scheme": "Primary and secondary colors to use",
+      "design_elements": "Key visual elements, icons, or graphics to include"
+    }},
+    {{
+      "design_concept": "Poster Design 3 Title",
+      "visual_description": "Detailed description of the poster layout, colors, imagery, text placement",
+      "headline_text": "Main headline for the poster",
+      "subheadline_text": "Supporting text or tagline",
+      "color_scheme": "Primary and secondary colors to use",
+      "design_elements": "Key visual elements, icons, or graphics to include"
+    }},
+    {{
+      "design_concept": "Poster Design 4 Title",
+      "visual_description": "Detailed description of the poster layout, colors, imagery, text placement",
+      "headline_text": "Main headline for the poster",
+      "subheadline_text": "Supporting text or tagline",
+      "color_scheme": "Primary and secondary colors to use",
+      "design_elements": "Key visual elements, icons, or graphics to include"
+    }},
+    {{
+      "design_concept": "Poster Design 5 Title",
+      "visual_description": "Detailed description of the poster layout, colors, imagery, text placement",
+      "headline_text": "Main headline for the poster",
+      "subheadline_text": "Supporting text or tagline",
+      "color_scheme": "Primary and secondary colors to use",
+      "design_elements": "Key visual elements, icons, or graphics to include"
+    }}
   ]
 }}
+
+IMPORTANT:
+- Campaign ideas should be specific to {platform} platform
+- CTAs should be action-oriented and conversion-focused
+- Poster designs should be platform-appropriate (e.g., square for Instagram, landscape for LinkedIn)
+- Keep language professional and {tone}
 
 CRITICAL: Return ONLY the JSON object, nothing else."""
 
     try:
         message = client.chat.completions.create(
             model=MODEL,
-            max_tokens=2000,
+            max_tokens=4000,
             messages=[{"role": "user", "content": prompt}]
         )
         

@@ -1045,3 +1045,380 @@ textarea:focus {
         font-size: 16px; /* Prevents zoom on iOS */
     }
 }
+
+/* ============= STRATEGY ITEMS ============= */
+
+.strategy-item {
+    background: var(--bg-secondary);
+    padding: 1.5rem;
+    border-radius: 0.75rem;
+    margin-bottom: 1.25rem;
+    border-left: 4px solid var(--primary);
+    border: 1px solid var(--border);
+    border-left: 4px solid var(--primary);
+}
+
+.strategy-item strong {
+    display: block;
+    color: var(--text-primary);
+    margin-bottom: 0.75rem;
+    font-size: 1.05rem;
+}
+
+.strategy-item p {
+    margin-bottom: 0.5rem;
+    color: var(--text-secondary);
+    font-size: 0.95rem;
+    line-height: 1.6;
+}
+
+.strategy-item p strong {
+    display: inline;
+    color: var(--primary-light);
+    font-size: 0.9rem;
+}
+
+/* ============= ANALYSIS SECTION ============= */
+
+.analysis-section {
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+}
+
+.analysis-section strong {
+    display: block;
+    color: var(--text-primary);
+    margin-bottom: 0.75rem;
+    font-size: 1.05rem;
+}
+
+.analysis-section ul {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+}
+
+.analysis-section ul li {
+    background: var(--bg-secondary);
+    padding: 0.75rem 1rem;
+    border-radius: 0.5rem;
+    margin-bottom: 0.5rem;
+    color: var(--text-secondary);
+    border-left: 3px solid var(--primary);
+}
+
+/* ============= PERFORMANCE SECTION ============= */
+
+.performance-section {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+}
+
+.performance-section p {
+    margin-bottom: 0.75rem;
+    color: var(--text-secondary);
+    font-size: 0.95rem;
+}
+
+.performance-section p strong {
+    color: var(--text-primary);
+    font-weight: 600;
+}
+
+/* ============= TAB NAVIGATION ============= */
+
+.tab-navigation {
+    display: flex;
+    gap: 0.5rem;
+    margin-bottom: 2rem;
+    border-bottom: 2px solid var(--border);
+    overflow-x: auto;
+    padding-bottom: 0;
+}
+
+.tab-btn {
+    padding: 1rem 2rem;
+    background: transparent;
+    border: none;
+    color: var(--text-secondary);
+    font-weight: 600;
+    font-size: 0.95rem;
+    cursor: pointer;
+    transition: all 0.3s;
+    border-bottom: 3px solid transparent;
+    white-space: nowrap;
+    position: relative;
+    bottom: -2px;
+}
+
+.tab-btn:hover {
+    color: var(--primary-light);
+    background: rgba(129, 140, 248, 0.05);
+}
+
+.tab-btn.active {
+    color: var(--primary);
+    border-bottom-color: var(--primary);
+    background: rgba(129, 140, 248, 0.1);
+}
+
+.tab-content-wrapper {
+    min-height: 400px;
+}
+
+.tab-content {
+    display: none;
+    animation: fadeIn 0.3s ease-in;
+}
+
+.tab-content.active {
+    display: block;
+}
+
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(10px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+@media (max-width: 768px) {
+    .tab-navigation {
+        gap: 0.25rem;
+    }
+    
+    .tab-btn {
+        padding: 0.75rem 1rem;
+        font-size: 0.85rem;
+    }
+}
+
+/* ============= CAMPAIGN IDEA ITEMS ============= */
+
+.campaign-idea-item {
+    display: flex;
+    gap: 1.5rem;
+    background: var(--bg-secondary);
+    padding: 1.5rem;
+    border-radius: 0.75rem;
+    margin-bottom: 1.25rem;
+    border: 1px solid var(--border);
+    transition: all 0.3s;
+}
+
+.campaign-idea-item:hover {
+    border-color: var(--primary);
+    transform: translateX(5px);
+}
+
+.idea-number {
+    width: 40px;
+    height: 40px;
+    background: var(--gradient-primary);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 700;
+    font-size: 1.2rem;
+    color: white;
+    flex-shrink: 0;
+}
+
+.idea-content h5 {
+    color: var(--text-primary);
+    margin-bottom: 0.5rem;
+    font-size: 1.1rem;
+}
+
+.idea-content p {
+    color: var(--text-secondary);
+    margin: 0;
+    line-height: 1.6;
+}
+
+/* ============= CTA ITEMS ============= */
+
+.cta-item {
+    display: flex;
+    gap: 1.5rem;
+    background: var(--bg-secondary);
+    padding: 1.5rem;
+    border-radius: 0.75rem;
+    margin-bottom: 1.25rem;
+    border: 1px solid var(--border);
+    transition: all 0.3s;
+}
+
+.cta-item:hover {
+    border-color: var(--secondary);
+    transform: translateX(5px);
+}
+
+.cta-number {
+    width: 40px;
+    height: 40px;
+    background: var(--gradient-secondary);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 700;
+    font-size: 1.2rem;
+    color: white;
+    flex-shrink: 0;
+}
+
+.cta-content {
+    flex: 1;
+}
+
+.cta-text {
+    background: var(--primary);
+    color: white;
+    padding: 0.75rem 1.5rem;
+    border-radius: 0.5rem;
+    font-weight: 600;
+    font-size: 1rem;
+    display: inline-block;
+    margin-bottom: 0.75rem;
+}
+
+.cta-content p {
+    color: var(--text-secondary);
+    margin: 0;
+    line-height: 1.6;
+}
+
+/* ============= POSTER ITEMS ============= */
+
+.poster-item {
+    background: var(--bg-secondary);
+    border-radius: 1rem;
+    margin-bottom: 2rem;
+    border: 1px solid var(--border);
+    overflow: hidden;
+    transition: all 0.3s;
+}
+
+.poster-item:hover {
+    border-color: var(--primary);
+    box-shadow: var(--shadow-lg);
+}
+
+.poster-header {
+    background: var(--bg-tertiary);
+    padding: 1.5rem;
+    border-bottom: 1px solid var(--border);
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+}
+
+.poster-number {
+    background: var(--primary);
+    color: white;
+    padding: 0.5rem 1rem;
+    border-radius: 2rem;
+    font-weight: 600;
+    font-size: 0.85rem;
+}
+
+.poster-header h5 {
+    color: var(--text-primary);
+    margin: 0;
+    font-size: 1.2rem;
+}
+
+.poster-content {
+    padding: 1.5rem;
+}
+
+.poster-section {
+    margin-bottom: 1.5rem;
+}
+
+.poster-section strong {
+    display: block;
+    color: var(--primary-light);
+    margin-bottom: 0.5rem;
+    font-size: 0.9rem;
+}
+
+.poster-section p {
+    color: var(--text-secondary);
+    margin: 0;
+    line-height: 1.6;
+}
+
+.poster-text-preview {
+    background: var(--bg-tertiary);
+    padding: 2rem;
+    border-radius: 0.75rem;
+    text-align: center;
+    margin-bottom: 1.5rem;
+    border: 2px dashed var(--border);
+}
+
+.poster-headline {
+    font-size: 1.5rem;
+    font-weight: 700;
+    color: var(--text-primary);
+    margin-bottom: 0.75rem;
+    line-height: 1.3;
+}
+
+.poster-subheadline {
+    font-size: 1rem;
+    color: var(--text-secondary);
+    font-style: italic;
+}
+
+.poster-details {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 1rem;
+}
+
+.poster-detail-item {
+    background: var(--bg-tertiary);
+    padding: 1rem;
+    border-radius: 0.5rem;
+    border: 1px solid var(--border);
+}
+
+.poster-detail-item strong {
+    display: block;
+    color: var(--primary-light);
+    margin-bottom: 0.5rem;
+    font-size: 0.85rem;
+}
+
+.poster-detail-item p {
+    color: var(--text-secondary);
+    margin: 0;
+    font-size: 0.9rem;
+}
+
+@media (max-width: 768px) {
+    .campaign-idea-item,
+    .cta-item {
+        flex-direction: column;
+        gap: 1rem;
+    }
+    
+    .poster-details {
+        grid-template-columns: 1fr;
+    }
+    
+    .poster-header {
+        flex-direction: column;
+        align-items: flex-start;
+    }
+}
