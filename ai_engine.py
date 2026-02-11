@@ -33,52 +33,61 @@ def generate_campaign(product_desc, audience, platform, industry):
     
     tone = INDUSTRY_TONES.get(industry, 'professional and engaging')
     
-    prompt = f"""You are an expert marketing strategist. Generate a data-driven marketing campaign with complete reasoning.
+    prompt = f"""You are an expert AI Marketing Strategist specialized in digital campaigns.
 
-INPUTS:
-- Product: {product_desc}
-- Target Audience: {audience}
-- Platform: {platform}
-- Industry: {industry}
-- Tone: {tone}
+Generate a marketing campaign plan for {platform} platform.
+
+INPUT DETAILS:
+Product/Service: {product_desc}
+Industry: {industry}
+Target Audience: {audience}
+Platform: {platform}
 
 Return ONLY valid JSON (no markdown, no code blocks) with this exact structure:
 {{
-  "campaign_objective": "One clear, measurable objective",
-  "content_ideas": [
-    {{"title": "...", "description": "..."}},
-    {{"title": "...", "description": "..."}},
-    {{"title": "...", "description": "..."}}
+  "campaign_ideas": [
+    {{"title": "Campaign Idea 1", "description": "2-3 lines describing the campaign idea"}},
+    {{"title": "Campaign Idea 2", "description": "2-3 lines describing the campaign idea"}},
+    {{"title": "Campaign Idea 3", "description": "2-3 lines describing the campaign idea"}},
+    {{"title": "Campaign Idea 4", "description": "2-3 lines describing the campaign idea"}},
+    {{"title": "Campaign Idea 5", "description": "2-3 lines describing the campaign idea"}}
   ],
-  "ad_copy_variants": [
-    {{"headline": "...", "description": "..."}},
-    {{"headline": "...", "description": "..."}},
-    {{"headline": "...", "description": "..."}}
+  "cta_suggestions": [
+    {{"cta_text": "Call to Action 1", "description": "When and why to use this CTA"}},
+    {{"cta_text": "Call to Action 2", "description": "When and why to use this CTA"}},
+    {{"cta_text": "Call to Action 3", "description": "When and why to use this CTA"}},
+    {{"cta_text": "Call to Action 4", "description": "When and why to use this CTA"}},
+    {{"cta_text": "Call to Action 5", "description": "When and why to use this CTA"}}
   ],
-  "cta_suggestions": ["CTA1", "CTA2", "CTA3"],
-  "posting_strategy": "Specific timing, frequency, and cadence",
-  "roi_estimate": "X-Y% projected increase",
-  "conversion_probability": "X% estimated conversion rate",
-  "reasoning": {{
-    "objective_why": "Why this objective for this audience",
-    "content_strategy": "Why these content ideas work",
-    "platform_fit": "Why {platform} is ideal for {audience}",
-    "industry_considerations": "How {industry} dynamics inform this",
-    "success_metrics": "How to measure success"
-  }},
-  "recommended_next_actions": [
-    "Action 1",
-    "Action 2",
-    "Action 3"
-  ]
+  "content_calendar": [
+    {{"day": 1, "post_type": "Educational/Promotional/Engagement", "content_idea": "Specific post idea", "best_time": "9 AM"}},
+    {{"day": 2, "post_type": "Educational/Promotional/Engagement", "content_idea": "Specific post idea", "best_time": "12 PM"}},
+    {{"day": 3, "post_type": "Educational/Promotional/Engagement", "content_idea": "Specific post idea", "best_time": "3 PM"}},
+    {{"day": 4, "post_type": "Educational/Promotional/Engagement", "content_idea": "Specific post idea", "best_time": "10 AM"}},
+    {{"day": 5, "post_type": "Educational/Promotional/Engagement", "content_idea": "Specific post idea", "best_time": "1 PM"}},
+    {{"day": 6, "post_type": "Educational/Promotional/Engagement", "content_idea": "Specific post idea", "best_time": "11 AM"}},
+    {{"day": 7, "post_type": "Educational/Promotional/Engagement", "content_idea": "Specific post idea", "best_time": "2 PM"}}
+  ],
+  "competitor_analysis": {{
+    "common_strategies": ["Strategy 1 competitors use", "Strategy 2 competitors use", "Strategy 3 competitors use"],
+    "gaps_opportunities": ["Gap 1 you can exploit", "Gap 2 you can exploit", "Gap 3 you can exploit"],
+    "differentiation_tactics": ["How to stand out 1", "How to stand out 2", "How to stand out 3"]
+  }}
 }}
+
+IMPORTANT:
+- Campaign ideas specific to {platform}
+- CTAs action-oriented
+- Hashtags relevant to {industry} and trending on {platform}
+- Content calendar with 7 days (can be repeated for 30 days)
+- Competitor analysis based on {industry} standards
 
 CRITICAL: Return ONLY the JSON object, nothing else."""
 
     try:
         message = client.chat.completions.create(
             model=MODEL,
-            max_tokens=2000,
+            max_tokens=4000,
             messages=[{"role": "user", "content": prompt}]
         )
         

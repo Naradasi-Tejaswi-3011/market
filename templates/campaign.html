@@ -90,6 +90,52 @@
             
             <!-- Output Results -->
             <div class="results-section">
+                <div id="toolDescription" class="tool-description">
+                    <h3>AI Campaign Generator</h3>
+                    <p>Generate comprehensive marketing campaigns powered by AI in seconds.</p>
+                    
+                    <div class="feature-list">
+                        <div class="feature-item">
+                            <span class="feature-icon">💡</span>
+                            <div>
+                                <strong>Campaign Ideas</strong>
+                                <p>Get 5 creative campaign concepts tailored to your platform</p>
+                            </div>
+                        </div>
+                        <div class="feature-item">
+                            <span class="feature-icon">🎯</span>
+                            <div>
+                                <strong>Call to Actions</strong>
+                                <p>Conversion-optimized CTAs with usage recommendations</p>
+                            </div>
+                        </div>
+                        <div class="feature-item">
+                            <span class="feature-icon">📅</span>
+                            <div>
+                                <strong>Content Calendar</strong>
+                                <p>7-day posting schedule with optimal timing</p>
+                            </div>
+                        </div>
+                        <div class="feature-item">
+                            <span class="feature-icon">🔍</span>
+                            <div>
+                                <strong>Competitor Analysis</strong>
+                                <p>Market insights and differentiation strategies</p>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="how-it-works">
+                        <h4>How It Works</h4>
+                        <ol>
+                            <li>Enter your product details and target audience</li>
+                            <li>Select your marketing platform</li>
+                            <li>Choose your industry</li>
+                            <li>Click Generate and get instant AI-powered insights</li>
+                        </ol>
+                    </div>
+                </div>
+                
                 <div id="loadingSpinner" class="spinner" style="display: none;">
                     <div class="spinner-content">
                         <div class="spinner-circle"></div>
@@ -98,62 +144,53 @@
                 </div>
                 
                 <div id="campaignOutput" style="display: none;">
-                    <h3>🚀 Generated Campaign</h3>
+                    <h3>Generated Campaign for <span id="platformName"></span></h3>
                     
-                    <div class="output-card">
-                        <h4>Campaign Objective</h4>
-                        <p id="objective"></p>
+                    <!-- Tab Navigation -->
+                    <div class="tab-navigation">
+                        <button class="tab-btn active" data-tab="ideas">Campaign Ideas</button>
+                        <button class="tab-btn" data-tab="cta">Call to Actions</button>
+                        <button class="tab-btn" data-tab="calendar">Content Calendar</button>
+                        <button class="tab-btn" data-tab="competitor">Competitor Analysis</button>
                     </div>
                     
-                    <div class="output-card">
-                        <h4>📝 Content Ideas</h4>
-                        <div id="contentIdeas"></div>
-                    </div>
-                    
-                    <div class="output-card">
-                        <h4>💬 Ad Copy Variants</h4>
-                        <div id="adCopy"></div>
-                    </div>
-                    
-                    <div class="output-card">
-                        <h4>🎯 CTA Suggestions</h4>
-                        <div id="ctaSuggestions"></div>
-                    </div>
-                    
-                    <div class="output-card">
-                        <h4>📅 Posting Strategy</h4>
-                        <p id="postingStrategy"></p>
-                    </div>
-                    
-                    <div class="metrics-grid">
-                        <div class="metric-box">
-                            <label>Estimated ROI</label>
-                            <p id="roiEstimate" class="metric-value"></p>
+                    <!-- Tab Content -->
+                    <div class="tab-content-wrapper">
+                        <div class="tab-content active" id="tab-ideas">
+                            <div class="output-card">
+                                <h4>5 Campaign Ideas</h4>
+                                <div id="campaignIdeas"></div>
+                            </div>
                         </div>
-                        <div class="metric-box">
-                            <label>Conversion Probability</label>
-                            <p id="conversionProbability" class="metric-value"></p>
+                        
+                        <div class="tab-content" id="tab-cta">
+                            <div class="output-card">
+                                <h4>5 Call to Action Suggestions</h4>
+                                <div id="ctaSuggestions"></div>
+                            </div>
                         </div>
-                    </div>
-                    
-                    <!-- Explainability Section -->
-                    <div class="output-card explainability">
-                        <h4>🔍 Why AI Generated This:</h4>
-                        <div id="reasoning" class="reasoning-section"></div>
-                    </div>
-                    
-                    <!-- Recommended Actions -->
-                    <div class="output-card recommended-actions">
-                        <h4>📌 Recommended Next Actions:</h4>
-                        <div id="nextActions"></div>
+                        
+                        <div class="tab-content" id="tab-calendar">
+                            <div class="output-card">
+                                <h4>7-Day Content Calendar</h4>
+                                <div id="contentCalendar"></div>
+                            </div>
+                        </div>
+                        
+                        <div class="tab-content" id="tab-competitor">
+                            <div class="output-card">
+                                <h4>Competitor Analysis</h4>
+                                <div id="competitorAnalysis"></div>
+                            </div>
+                        </div>
                     </div>
                     
                     <button id="saveCampaignBtn" class="btn btn-success">
-                        ✓ Save Campaign
+                        Save Campaign
                     </button>
                 </div>
                 
-                <div id="previousCampaigns" class="previous-outputs">
+                <div id="previousCampaigns" class="previous-outputs" style="display: none;">
                     <h4>Previous Campaigns</h4>
                     <div id="campaignList" class="output-list"></div>
                 </div>
@@ -201,6 +238,7 @@
                 document.getElementById('loadingSpinner').style.display = 'none';
                 
                 if (response.ok) {
+                    document.getElementById('toolDescription').style.display = 'none';
                     displayCampaignOutput(data.campaign);
                     currentCampaignId = data.campaign_id;
                     await loadCampaigns();
@@ -216,53 +254,74 @@
         }
         
         function displayCampaignOutput(campaign) {
-            document.getElementById('objective').textContent = campaign.campaign_objective;
+            // Set platform name
+            const platform = document.getElementById('platform').value;
+            document.getElementById('platformName').textContent = platform;
             
-            document.getElementById('contentIdeas').innerHTML = campaign.content_ideas
-                .map(i => `<div class="idea-item"><strong>${i.title}</strong><p>${i.description}</p></div>`)
-                .join('');
+            // Display Campaign Ideas
+            document.getElementById('campaignIdeas').innerHTML = campaign.campaign_ideas
+                .map((idea, i) => `
+                    <div class="campaign-idea-item">
+                        <div class="idea-number">${i+1}</div>
+                        <div class="idea-content">
+                            <h5>${idea.title}</h5>
+                            <p>${idea.description}</p>
+                        </div>
+                    </div>
+                `).join('');
             
-            document.getElementById('adCopy').innerHTML = campaign.ad_copy_variants
-                .map(v => `<div class="copy-variant"><strong>${v.headline}</strong><p>${v.description}</p></div>`)
-                .join('');
-            
+            // Display CTA Suggestions
             document.getElementById('ctaSuggestions').innerHTML = campaign.cta_suggestions
-                .map(c => `<span class="cta-tag">${c}</span>`)
-                .join('');
+                .map((cta, i) => `
+                    <div class="cta-item">
+                        <div class="cta-number">${i+1}</div>
+                        <div class="cta-content">
+                            <div class="cta-text">${cta.cta_text}</div>
+                            <p>${cta.description}</p>
+                        </div>
+                    </div>
+                `).join('');
             
-            document.getElementById('postingStrategy').textContent = campaign.posting_strategy;
-            document.getElementById('roiEstimate').textContent = campaign.roi_estimate;
-            document.getElementById('conversionProbability').textContent = campaign.conversion_probability;
-            
-            // Display reasoning
-            const reasoning = campaign.reasoning;
-            document.getElementById('reasoning').innerHTML = `
-                <div class="reasoning-item">
-                    <strong>Objective Strategy:</strong>
-                    <p>${reasoning.objective_why}</p>
-                </div>
-                <div class="reasoning-item">
-                    <strong>Content Approach:</strong>
-                    <p>${reasoning.content_strategy}</p>
-                </div>
-                <div class="reasoning-item">
-                    <strong>Platform Selection:</strong>
-                    <p>${reasoning.platform_fit}</p>
-                </div>
-                <div class="reasoning-item">
-                    <strong>Industry Considerations:</strong>
-                    <p>${reasoning.industry_considerations}</p>
-                </div>
-                <div class="reasoning-item">
-                    <strong>Success Metrics:</strong>
-                    <p>${reasoning.success_metrics}</p>
+            // Display Content Calendar
+            document.getElementById('contentCalendar').innerHTML = `
+                <div class="calendar-grid">
+                    ${campaign.content_calendar.map(day => `
+                        <div class="calendar-day">
+                            <div class="day-header">
+                                <span class="day-number">Day ${day.day}</span>
+                                <span class="post-type">${day.post_type}</span>
+                            </div>
+                            <div class="day-content">
+                                <p>${day.content_idea}</p>
+                                <span class="best-time">Best Time: ${day.best_time}</span>
+                            </div>
+                        </div>
+                    `).join('')}
                 </div>
             `;
             
-            // Display next actions
-            document.getElementById('nextActions').innerHTML = campaign.recommended_next_actions
-                .map(a => `<div class="action-item">✓ ${a}</div>`)
-                .join('');
+            // Display Competitor Analysis
+            const competitor = campaign.competitor_analysis;
+            document.getElementById('competitorAnalysis').innerHTML = `
+                <div class="analysis-block">
+                    <h5>Common Competitor Strategies</h5>
+                    <ul class="analysis-list">
+                        ${competitor.common_strategies.map(s => `<li>${s}</li>`).join('')}
+                    </ul>
+                </div>
+                <div class="analysis-block">
+                    <h5>Gaps & Opportunities</h5>
+                    <ul class="analysis-list opportunities">
+                        ${competitor.gaps_opportunities.map(g => `<li>${g}</li>`).join('')}
+                    </ul>
+                </div>
+                <div class="analysis-block">
+                    <h5>Differentiation Tactics</h5>
+                    <ul class="analysis-list tactics">
+                        ${competitor.differentiation_tactics.map(t => `<li>${t}</li>`).join('')}
+                    </ul>
+                </div>
+            `;
             
             document.getElementById('campaignOutput').style.display = 'block';
         }
@@ -297,6 +356,24 @@
         
         document.addEventListener('DOMContentLoaded', () => {
             loadCampaigns();
+            
+            // Tab switching functionality
+            const tabBtns = document.querySelectorAll('.tab-btn');
+            const tabContents = document.querySelectorAll('.tab-content');
+            
+            tabBtns.forEach(btn => {
+                btn.addEventListener('click', () => {
+                    const tabName = btn.getAttribute('data-tab');
+                    
+                    // Remove active class from all buttons and contents
+                    tabBtns.forEach(b => b.classList.remove('active'));
+                    tabContents.forEach(c => c.classList.remove('active'));
+                    
+                    // Add active class to clicked button and corresponding content
+                    btn.classList.add('active');
+                    document.getElementById(`tab-${tabName}`).classList.add('active');
+                });
+            });
             
             // Save campaign button
             document.getElementById('saveCampaignBtn').addEventListener('click', () => {
