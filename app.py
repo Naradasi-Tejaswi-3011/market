@@ -74,35 +74,46 @@ def get_user():
 @jwt_required()
 def generate_campaign_handler():
     """Generate marketing campaign"""
-    user_id = get_jwt_identity()
-    data = request.get_json()
-    
-    product = data.get('product')
-    audience = data.get('audience')
-    platform = data.get('platform')
-    industry = data.get('industry')
-    
-    if not all([product, audience, platform, industry]):
-        return jsonify({'error': 'Missing required fields'}), 400
-    
-    # Generate campaign using AI
-    ai_result = generate_campaign(product, audience, platform, industry)
-    
-    if ai_result['status'] != 'success':
-        return jsonify(ai_result), 500
-    
-    # Save to database
-    campaign_id = save_campaign_to_db(
-        ObjectId(user_id),
-        product, audience, platform, industry,
-        ai_result['campaign']
-    )
-    
-    return jsonify({
-        'campaign_id': campaign_id,
-        'campaign': ai_result['campaign'],
-        'message': 'Campaign generated successfully'
-    }), 201
+    try:
+        user_id = get_jwt_identity()
+        data = request.get_json()
+        
+        product = data.get('product')
+        audience = data.get('audience')
+        platform = data.get('platform')
+        industry = data.get('industry')
+        
+        if not all([product, audience, platform, industry]):
+            return jsonify({'error': 'Missing required fields'}), 400
+        
+        print(f"Generating campaign for: {product}, {platform}, {industry}")
+        
+        # Generate campaign using AI
+        ai_result = generate_campaign(product, audience, platform, industry)
+        
+        print(f"AI Result status: {ai_result.get('status')}")
+        
+        if ai_result['status'] != 'success':
+            print(f"AI Error: {ai_result.get('error')}")
+            return jsonify(ai_result), 500
+        
+        # Save to database
+        campaign_id = save_campaign_to_db(
+            ObjectId(user_id),
+            product, audience, platform, industry,
+            ai_result['campaign']
+        )
+        
+        return jsonify({
+            'campaign_id': campaign_id,
+            'campaign': ai_result['campaign'],
+            'message': 'Campaign generated successfully'
+        }), 201
+    except Exception as e:
+        print(f"Campaign generation error: {str(e)}")
+        import traceback
+        traceback.print_exc()
+        return jsonify({'error': str(e)}), 500
 
 
 @app.route('/api/campaigns', methods=['GET'])
@@ -140,38 +151,49 @@ def get_campaign(campaign_id):
 @jwt_required()
 def generate_pitch_handler():
     """Generate sales pitch"""
-    user_id = get_jwt_identity()
-    data = request.get_json()
-    
-    product = data.get('product')
-    description = data.get('description')
-    persona = data.get('persona')
-    industry = data.get('industry')
-    customer_type = data.get('customer_type')
-    budget_preference = data.get('budget_preference')
-    language = data.get('language', 'English')
-    
-    if not all([product, description, persona, industry, customer_type, budget_preference]):
-        return jsonify({'error': 'Missing required fields'}), 400
-    
-    # Generate pitch using AI
-    ai_result = generate_pitch(product, description, persona, industry, customer_type, budget_preference, language)
-    
-    if ai_result['status'] != 'success':
-        return jsonify(ai_result), 500
-    
-    # Save to database
-    pitch_id = save_pitch_to_db(
-        ObjectId(user_id),
-        product, description, persona, industry, customer_type, budget_preference,
-        ai_result['pitch']
-    )
-    
-    return jsonify({
-        'pitch_id': pitch_id,
-        'pitch': ai_result['pitch'],
-        'message': 'Pitch generated successfully'
-    }), 201
+    try:
+        user_id = get_jwt_identity()
+        data = request.get_json()
+        
+        product = data.get('product')
+        description = data.get('description')
+        persona = data.get('persona')
+        industry = data.get('industry')
+        customer_type = data.get('customer_type')
+        budget_preference = data.get('budget_preference')
+        language = data.get('language', 'English')
+        
+        if not all([product, description, persona, industry, customer_type, budget_preference]):
+            return jsonify({'error': 'Missing required fields'}), 400
+        
+        print(f"Generating pitch for: {product}, {language}")
+        
+        # Generate pitch using AI
+        ai_result = generate_pitch(product, description, persona, industry, customer_type, budget_preference, language)
+        
+        print(f"AI Result status: {ai_result.get('status')}")
+        
+        if ai_result['status'] != 'success':
+            print(f"AI Error: {ai_result.get('error')}")
+            return jsonify(ai_result), 500
+        
+        # Save to database
+        pitch_id = save_pitch_to_db(
+            ObjectId(user_id),
+            product, description, persona, industry, customer_type, budget_preference,
+            ai_result['pitch']
+        )
+        
+        return jsonify({
+            'pitch_id': pitch_id,
+            'pitch': ai_result['pitch'],
+            'message': 'Pitch generated successfully'
+        }), 201
+    except Exception as e:
+        print(f"Pitch generation error: {str(e)}")
+        import traceback
+        traceback.print_exc()
+        return jsonify({'error': str(e)}), 500
 
 
 @app.route('/api/pitches', methods=['GET'])
@@ -468,4 +490,4 @@ def internal_error(error):
 
 
 if __name__ == '__main__':
-    app.run(debug=True, host='0.0.0.0', port=5000)
+    app.run(debug=False, host='0.0.0.0', port=5001)

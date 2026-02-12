@@ -82,7 +82,8 @@ class Lead:
         self.created_at = created_at or datetime.utcnow()
     
     def to_dict(self):
-        return {
+        # Flatten top-level scoring fields for easier access
+        data = {
             'user_id': self.user_id,
             'budget': self.budget,
             'business_need': self.business_need,
@@ -92,6 +93,18 @@ class Lead:
             'ai_output': self.ai_output,
             'created_at': self.created_at
         }
+        
+        # Flatten key fields from ai_output to top level for easier querying
+        if self.ai_output:
+            data['lead_score'] = self.ai_output.get('lead_score')
+            data['lead_category'] = self.ai_output.get('lead_category')
+            data['conversion_probability'] = self.ai_output.get('conversion_probability')
+            data['detailed_reasoning'] = self.ai_output.get('detailed_reasoning')
+            data['score_breakdown'] = self.ai_output.get('score_breakdown')
+            data['risk_factors'] = self.ai_output.get('risk_factors', [])
+            data['risk_level'] = self.ai_output.get('risk_level')
+        
+        return data
 
 
 class Feedback:

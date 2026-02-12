@@ -7,6 +7,8 @@ from models import ActivityLog
 def log_activity(user_id, action, details):
     """Log user activity to database"""
     db = get_db()
+    if db is None:
+        return
     activity = ActivityLog(user_id, action, details)
     db.activity_logs.insert_one(activity.to_dict())
 
@@ -15,6 +17,8 @@ def save_campaign_to_db(user_id, product, audience, platform, industry, ai_outpu
     """Save campaign to MongoDB"""
     from models import Campaign
     db = get_db()
+    if db is None:
+        return None
     
     campaign = Campaign(user_id, product, audience, platform, industry, ai_output)
     result = db.campaigns.insert_one(campaign.to_dict())
@@ -33,6 +37,8 @@ def save_pitch_to_db(user_id, product, description, persona, industry, customer_
     """Save pitch to MongoDB"""
     from models import Pitch
     db = get_db()
+    if db is None:
+        return None
     
     pitch = Pitch(user_id, product, description, persona, industry, customer_type, budget_preference, ai_output)
     result = db.pitches.insert_one(pitch.to_dict())
@@ -50,6 +56,8 @@ def save_lead_to_db(user_id, budget, business_need, urgency, authority, industry
     """Save lead score to MongoDB"""
     from models import Lead
     db = get_db()
+    if db is None:
+        return None
     
     lead = Lead(user_id, budget, business_need, urgency, authority, industry, ai_output)
     result = db.leads.insert_one(lead.to_dict())
@@ -124,6 +132,8 @@ def save_feedback_to_db(user_id, item_id, item_type, rating, reasons=None, detai
 def get_user_campaigns(user_id, limit=10):
     """Get user's campaigns from database"""
     db = get_db()
+    if db is None:
+        return []
     campaigns = list(db.campaigns.find(
         {'user_id': ObjectId(user_id)}
     ).sort('created_at', -1).limit(limit))
@@ -139,6 +149,8 @@ def get_user_campaigns(user_id, limit=10):
 def get_user_pitches(user_id, limit=10):
     """Get user's pitches from database"""
     db = get_db()
+    if db is None:
+        return []
     pitches = list(db.pitches.find(
         {'user_id': ObjectId(user_id)}
     ).sort('created_at', -1).limit(limit))
@@ -154,6 +166,8 @@ def get_user_pitches(user_id, limit=10):
 def get_user_leads(user_id, limit=10):
     """Get user's scored leads from database"""
     db = get_db()
+    if db is None:
+        return []
     leads = list(db.leads.find(
         {'user_id': ObjectId(user_id)}
     ).sort('created_at', -1).limit(limit))
@@ -169,6 +183,8 @@ def get_user_leads(user_id, limit=10):
 def get_user_activity(user_id, limit=20):
     """Get user's activity log"""
     db = get_db()
+    if db is None:
+        return []
     activities = list(db.activity_logs.find(
         {'user_id': ObjectId(user_id)}
     ).sort('created_at', -1).limit(limit))
@@ -184,6 +200,8 @@ def get_user_activity(user_id, limit=20):
 def get_campaign_by_id(campaign_id):
     """Get campaign by ID"""
     db = get_db()
+    if db is None:
+        return None
     campaign = db.campaigns.find_one({'_id': ObjectId(campaign_id)})
     
     if campaign:
@@ -196,6 +214,8 @@ def get_campaign_by_id(campaign_id):
 def get_pitch_by_id(pitch_id):
     """Get pitch by ID"""
     db = get_db()
+    if db is None:
+        return None
     pitch = db.pitches.find_one({'_id': ObjectId(pitch_id)})
     
     if pitch:
@@ -208,6 +228,8 @@ def get_pitch_by_id(pitch_id):
 def get_lead_by_id(lead_id):
     """Get lead by ID"""
     db = get_db()
+    if db is None:
+        return None
     lead = db.leads.find_one({'_id': ObjectId(lead_id)})
     
     if lead:

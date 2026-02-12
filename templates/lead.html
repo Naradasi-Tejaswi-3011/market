@@ -38,12 +38,11 @@
                         <label for="budget">Budget *</label>
                         <select id="budget" name="budget" required>
                             <option value="">Select budget...</option>
-                            <option value="Under $50K">Under $50K</option>
-                            <option value="$50K - $150K">$50K - $150K</option>
-                            <option value="$150K - $500K">$150K - $500K</option>
-                            <option value="$500K - $1M">$500K - $1M</option>
-                            <option value="Over $1M">Over $1M</option>
-                            <option value="Unknown">Unknown</option>
+                            <option value="Under ₹10L">Under ₹10L</option>
+                            <option value="₹10L – ₹50L">₹10L – ₹50L</option>
+                            <option value="₹50L – ₹2Cr">₹50L – ₹2Cr</option>
+                            <option value="₹2Cr – ₹5Cr">₹2Cr – ₹5Cr</option>
+                            <option value="Over ₹5Cr">Over ₹5Cr</option>
                         </select>
                     </div>
 
@@ -117,8 +116,10 @@
                 </div>
 
                 <div id="leadOutput" style="display: none;">
-                    <div class="insights-header">
-                        <h3>📊 Lead Qualification Insights</h3>
+                    <div class="insights-header" style="position: relative; margin-bottom: 1.5rem;">
+                        <h3 style="margin-right: 50px;">📊 Lead Qualification Insights</h3>
+                        <button type="button" class="modal-close" onclick="window.closeLeadOutput()" title="Close"
+                            style="position: absolute; right: 0; top: 50%; transform: translateY(-50%);">&times;</button>
                     </div>
 
                     <!-- Tab Navigation -->
@@ -193,11 +194,7 @@
                 <div id="feedbackMsg" class="feedback-message">Thank you for your feedback!</div>
             </div>
 
-            <div class="output-actions">
-                <button id="scoreLeadBtn" class="btn btn-success">
-                    ✓ Save Scoring
-                </button>
-            </div>
+
         </div>
         </div>
         </div>
@@ -581,10 +578,12 @@
             }
         }
 
+        window.closeLeadOutput = function () {
+            document.getElementById('leadOutput').style.display = 'none';
+            document.getElementById('placeholderCard').style.display = 'block';
+            document.getElementById('leadForm').reset();
+        }
         document.addEventListener('DOMContentLoaded', () => {
-            document.getElementById('scoreLeadBtn').addEventListener('click', () => {
-                alert('Lead scoring saved successfully!');
-            });
         });
     </script>
 </body>

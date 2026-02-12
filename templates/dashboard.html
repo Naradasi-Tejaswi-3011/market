@@ -88,7 +88,8 @@
             <div class="modal-content">
                 <div class="modal-header">
                     <h3 id="modalPitchTitle">Pitch Details</h3>
-                    <button class="modal-close" onclick="closePitchModal()">&times;</button>
+                    <button type="button" class="modal-close" onclick="window.closePitchModal()"
+                        title="Close">&times;</button>
                 </div>
                 <div class="modal-body" id="modalPitchBody">
                     <!-- Pitch details will be loaded here -->
@@ -101,7 +102,8 @@
             <div class="modal-content">
                 <div class="modal-header">
                     <h3 id="modalActivityTitle">Activity Details</h3>
-                    <button class="modal-close" onclick="closeActivityModal()">&times;</button>
+                    <button type="button" class="modal-close" onclick="window.closeActivityModal()"
+                        title="Close">&times;</button>
                 </div>
                 <div class="modal-body" id="modalActivityBody">
                     <!-- Activity details will be loaded here -->
@@ -327,7 +329,6 @@
                 document.getElementById('modalActivityBody').innerHTML = `<div class="activity-modal-list">${leadHtml}</div>`;
             }
         }
-
         function displaySocialModal(posts) {
             document.getElementById('modalActivityTitle').textContent = 'Created Posts';
 
@@ -350,10 +351,13 @@
             }
         }
 
-        function closeActivityModal() {
+        window.closeActivityModal = function () {
             document.getElementById('activityModal').style.display = 'none';
         }
 
+        window.closePitchModal = function () {
+            document.getElementById('pitchViewModal').style.display = 'none';
+        }
         document.getElementById('logoutBtn').addEventListener('click', () => {
             localStorage.removeItem('token');
             localStorage.removeItem('user_id');
@@ -569,7 +573,11 @@
             document.getElementById('modalPitchTitle').textContent = modalTitle;
 
             const leadAI = leadData.ai_output || {};
-
+            // Get lead score - handle both structures
+            const leadScore = leadData.lead_score || leadAI.lead_score || 'N/A';
+            const leadCat = leadData.lead_category || leadAI.lead_category || 'Unrated';
+            const convProb = leadData.conversion_probability || leadAI.conversion_probability || 'N/A';
+            const reasoning = leadData.detailed_reasoning || leadAI.detailed_reasoning || {};
             const modalBody = `
                 <div class="pitch-modal-content">
                     <div class="pitch-info">
@@ -599,22 +607,34 @@
                         <h4>Lead Quality Score</h4>
                         <div style="padding: 1.5rem; background: var(--bg-tertiary); border-radius: 0.5rem; text-align: center;">
                             <div style="font-size: 2.5rem; font-weight: bold; color: var(--primary); margin-bottom: 0.5rem;">
-                                ${leadAI.lead_quality_score || 'N/A'}%
+                                ${leadScore}${leadScore !== 'N/A' ? '%' : ''}
                             </div>
-                            <p style="margin: 0; color: #cbd5e1;">${leadAI.overall_assessment || 'Assessment pending'}</p>
+                            <p style="margin: 0.5rem 0 0 0; color: #cbd5e1;"><strong>Category:</strong> ${leadCat}</p>
+                            <p style="margin: 0.25rem 0 0 0; color: #cbd5e1;">Conversion Probability: ${convProb}${convProb !== 'N/A' ? '%' : ''}</p>
                         </div>
                     </div>
                     
                     <hr class="section-divider">
                     
                     <div class="pitch-section">
-                        <h4>Reasoning</h4>
-                        <p>${leadAI.reasoning || 'No reasoning provided'}</p>
-                    </div>
-                    
-                    <div class="pitch-section">
-                        <h4>Recommended Next Steps</h4>
-                        <p>${leadAI.recommended_next_steps || 'No recommendations'}</p>
+                        <h4>Analysis</h4>
+                        ${reasoning.budget_analysis ? `<div style="margin-bottom: 0.75rem;">
+                            <strong>Budget Analysis:</strong>
+                            <p style="margin: 0.25rem 0 0 0; font-size: 0.9rem; color: #cbd5e1;">${reasoning.budget_analysis}</p>
+                        </div>` : ''}
+                        ${reasoning.need_alignment ? `<div style="margin-bottom: 0.75rem;">
+                            <strong>Need Alignment:</strong>
+                            <p style="margin: 0.25rem 0 0 0; font-size: 0.9rem; color: #cbd5e1;">${reasoning.need_alignment}</p>
+                        </div>` : ''}
+                        ${reasoning.urgency_signal ? `<div style="margin-bottom: 0.75rem;">
+                            <strong>Urgency Signal:</strong>
+                            <p style="margin: 0.25rem 0 0 0; font-size: 0.9rem; color: #cbd5e1;">${reasoning.urgency_signal}</p>
+                        </div>` : ''}
+                        ${reasoning.authority_assessment ? `<div style="margin-bottom: 0.75rem;">
+                            <strong>Authority Assessment:</strong>
+                            <p style="margin: 0.25rem 0 0 0; font-size: 0.9rem; color: #cbd5e1;">${reasoning.authority_assessment}</p>
+                        </div>` : ''}
+                        ${!reasoning.budget_analysis ? '<p style="color: #cbd5e1;">Assessment pending...</p>' : ''}
                     </div>
                 </div>
             `;

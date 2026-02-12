@@ -144,7 +144,8 @@ INPUTS:
 - Tone: {tone}
 - Language: {language}
 
-IMPORTANT: Generate the ENTIRE pitch in {language} language.
+IMPORTANT: Generate the ENTIRE pitch in {language} language. 
+CRITICAL: Use native scripts for the output (e.g., Devanagari for Hindi, Telugu script for Telugu). Do NOT use Romanized script (English letters).
 
 Return ONLY valid JSON (no markdown, no code blocks):
 {{
@@ -334,8 +335,8 @@ def _intelligent_lead_score_fallback(budget, business_need, urgency, authority, 
     industry_score = _calculate_industry_score(industry)
     
     # Weighted BANT calculation
-    lead_score = int((budget_score * 0.25 + urgency_score * 0.25 + authority_score * 0.25 + need_score * 0.25) * 0.9)
-    conversion_prob = int(lead_score * 0.85)
+    lead_score = int((budget_score * 0.3 + urgency_score * 0.3 + authority_score * 0.2 + need_score * 0.2))
+    conversion_prob = int(lead_score * 0.9)
     
     # Determine category
     if lead_score >= 70:
@@ -383,33 +384,33 @@ def _intelligent_lead_score_fallback(budget, business_need, urgency, authority, 
 def _calculate_budget_score(budget):
     """Score budget from 0-100"""
     budget_lower = budget.lower()
-    if 'under $50k' in budget_lower:
-        return 40
-    elif '$50k - $150k' in budget_lower:
-        return 65
-    elif '$150k - $500k' in budget_lower:
-        return 85
+    if 'over $1m' in budget_lower:
+        return 100
     elif '$500k - $1m' in budget_lower:
         return 95
-    elif 'over $1m' in budget_lower:
-        return 100
+    elif '$150k - $500k' in budget_lower:
+        return 85
+    elif '$50k - $150k' in budget_lower:
+        return 70
+    elif 'under $50k' in budget_lower:
+        return 50
     else:
-        return 30  # Unknown
+        return 40  # Unknown
 
 
 def _calculate_urgency_score(urgency):
     """Score urgency/timeline from 0-100"""
     urgency_lower = urgency.lower()
     if 'immediately' in urgency_lower or 'high' in urgency_lower:
-        return 95
+        return 100
     elif '3 months' in urgency_lower or 'medium' in urgency_lower:
-        return 70
+        return 80
     elif '6+ months' in urgency_lower or 'low' in urgency_lower:
-        return 40
-    elif 'exploring' in urgency_lower:
-        return 25
-    else:
         return 50
+    elif 'exploring' in urgency_lower:
+        return 40
+    else:
+        return 60
 
 
 def _calculate_authority_score(authority):
@@ -418,13 +419,13 @@ def _calculate_authority_score(authority):
     if 'primary decision maker' in auth_lower:
         return 100
     elif 'budget approver' in auth_lower:
-        return 85
+        return 90
     elif 'technical influencer' in auth_lower or 'influencer' in auth_lower:
-        return 60
+        return 70
     elif 'end user' in auth_lower:
-        return 40
-    else:
         return 50
+    else:
+        return 60
 
 
 def _calculate_need_score(business_need):
@@ -573,13 +574,13 @@ def _intelligent_pitch_fallback(product, description, persona, industry, custome
     
     # Mock language support for key Indian languages (simplified)
     if language == "Hindi":
-        pitch_templates["elevator_pitch"] = f"Ham {industry} me {persona} ki madad karte hain {product} ke madhyam se..."
-        pitch_templates["value_proposition"] = "Behetar vyapaar vriddhi ke liye AI-powered samadhan."
-        pitch_templates["personalized_cta"] = "Aaj hi shuru karein."
+        pitch_templates["elevator_pitch"] = f"हम {industry} क्षेत्र में {persona} को {product} के माध्यम से अपने लक्ष्यों को प्राप्त करने में मदद करते हैं। एक ऐसे बाजार में जहां {description[:30]}... महत्वपूर्ण है, हमारा समाधान आपकी विशिष्ट आवश्यकताओं को पूरा करता है।"
+        pitch_templates["value_proposition"] = "बेहतर व्यवसाय विकास के लिए एआई-संचालित समाधान।"
+        pitch_templates["personalized_cta"] = "आज ही अपना डेमो बुक करें।"
     elif language == "Telugu":
-        pitch_templates["elevator_pitch"] = f"{industry} ranganlo {persona} ki {product} dwara manchi phalithalu andisthunnam..."
-        pitch_templates["value_proposition"] = "Me vyapaaranni AI tho vriddhi cheddam."
-        pitch_templates["personalized_cta"] = "Marihni vivarala kosam సంప్రదించండి."
+        pitch_templates["elevator_pitch"] = f"మేము {industry} రంగంలో {persona} కి {product} ద్వారా మెరుగైన ఫలితాలను సాధించడంలో సహాయపడతాము. {description[:30]}... కీలకమైన ఈ మార్కెట్‌లో, మా పరిష్కారం మీ అవసరాలను తీరుస్తుంది."
+        pitch_templates["value_proposition"] = "మీ వ్యాపారాన్ని AI తో వృద్ధి చేద్దాం."
+        pitch_templates["personalized_cta"] = "మరిన్ని వివరాల కోసం ఈరోజే సంప్రదించండి."
     
     return {
         "status": "success",
