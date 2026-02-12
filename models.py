@@ -121,7 +121,7 @@ class ActivityLog:
     """Activity tracking model"""
     def __init__(self, user_id, action, details, created_at=None):
         self.user_id = user_id
-        self.action = action  # 'campaign_created', 'pitch_created', 'lead_scored'
+        self.action = action  # 'campaign_created', 'pitch_created', 'lead_scored', 'social_post_created'
         self.details = details
         self.created_at = created_at or datetime.utcnow()
     
@@ -130,5 +130,31 @@ class ActivityLog:
             'user_id': self.user_id,
             'action': self.action,
             'details': self.details,
+            'created_at': self.created_at
+        }
+
+
+class SocialPost:
+    """Post creation AI output model"""
+    def __init__(self, user_id, product, dept, description, contact, others, 
+                 ai_output, created_at=None):
+        self.user_id = user_id
+        self.product = product
+        self.dept = dept
+        self.description = description
+        self.contact = contact
+        self.others = others
+        self.ai_output = ai_output  # JSON with captions and image_url
+        self.created_at = created_at or datetime.utcnow()
+    
+    def to_dict(self):
+        return {
+            'user_id': self.user_id,
+            'product': self.product,
+            'dept': self.dept,
+            'description': self.description,
+            'contact': self.contact,
+            'others': self.others,
+            'ai_output': self.ai_output,
             'created_at': self.created_at
         }

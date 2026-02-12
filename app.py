@@ -7,12 +7,12 @@ from bson.objectid import ObjectId
 
 import auth
 import db
-from ai_engine import generate_campaign, generate_pitch, score_lead
+from ai_engine import generate_campaign, generate_pitch, score_lead, generate_social_post
 from utils import (
-    save_campaign_to_db, save_pitch_to_db, save_lead_to_db,
-    get_user_campaigns, get_user_pitches, get_user_leads,
-    get_campaign_by_id, get_pitch_by_id, get_lead_by_id,
-    get_user_activity, save_feedback_to_db
+    save_campaign_to_db, save_pitch_to_db, save_lead_to_db, save_social_post_to_db,
+    get_user_campaigns, get_user_pitches, get_user_leads, get_user_social_posts,
+    get_campaign_by_id, get_pitch_by_id, get_lead_by_id, get_social_post_by_id,
+    get_user_activity, save_feedback_to_db, delete_pitch_from_db, delete_social_post_from_db
 )
 
 load_dotenv()
@@ -203,6 +203,18 @@ def get_pitch(pitch_id):
     return jsonify(pitch), 200
 
 
+@app.route('/api/pitches/<pitch_id>', methods=['DELETE'])
+@jwt_required()
+def delete_pitch(pitch_id):
+    """Delete a pitch"""
+    user_id = get_jwt_identity()
+    success = delete_pitch_from_db(pitch_id, user_id)
+    
+    if success:
+        return jsonify({'message': 'Pitch deleted successfully'}), 200
+    return jsonify({'error': 'Failed to delete pitch or unauthorized'}), 404
+
+
 # ============= LEAD SCORING ROUTES =============
 
 @app.route('/api/leads/score', methods=['POST'])
@@ -268,6 +280,85 @@ def get_lead(lead_id):
         return jsonify({'error': 'Unauthorized'}), 403
     
     return jsonify(lead), 200
+
+
+# ============= POST CREATION ROUTES =============
+
+@app.route('/api/social-media/generate', methods=['POST'])
+@jwt_required()
+def generate_social_post_handler():
+    """Generate post creation content"""
+    user_id = get_jwt_identity()
+    data = request.get_json()
+    
+    product = data.get('product')
+    dept = data.get('dept')
+    description = data.get('description')
+    contact = data.get('contact')
+    others = data.get('others', '')
+    
+    if not all([product, dept, description, contact]):
+        return jsonify({'error': 'Missing required fields'}), 400
+    
+    # Generate social post using AI
+    ai_result = generate_social_post(product, dept, description, contact, others)
+    
+    if ai_result['status'] != 'success':
+        return jsonify(ai_result), 500
+    
+    # Save to database
+    post_id = save_social_post_to_db(
+        ObjectId(user_id),
+        product, dept, description, contact, others,
+        ai_result['post']
+    )
+    
+    return jsonify({
+        'post_id': post_id,
+        'post': ai_result['post'],
+        'message': 'Post created successfully'
+    }), 201
+
+
+@app.route('/api/social-media', methods=['GET'])
+@jwt_required()
+def get_social_posts():
+    """Get user's created posts"""
+    user_id = get_jwt_identity()
+    posts = get_user_social_posts(user_id)
+    
+    return jsonify({
+        'posts': posts,
+        'count': len(posts)
+    }), 200
+
+
+@app.route('/api/social-media/<post_id>', methods=['GET'])
+@jwt_required()
+def get_social_post(post_id):
+    """Get specific created post"""
+    user_id = get_jwt_identity()
+    post = get_social_post_by_id(post_id)
+    
+    if not post:
+        return jsonify({'error': 'Post not found'}), 404
+    
+    if str(post['user_id']) != user_id:
+        return jsonify({'error': 'Unauthorized'}), 403
+    
+    return jsonify(post), 200
+
+
+@app.route('/api/social-media/<post_id>', methods=['DELETE'])
+@jwt_required()
+def delete_social_post(post_id):
+    """Delete a created post"""
+    user_id = get_jwt_identity()
+    success = delete_social_post_from_db(post_id, user_id)
+    
+    if success:
+        return jsonify({'message': 'Post deleted successfully'}), 200
+    return jsonify({'error': 'Failed to delete post or unauthorized'}), 404
 
 
 # ============= FEEDBACK ROUTES =============
@@ -356,6 +447,12 @@ def pitch_page():
 def lead_page():
     """Lead scoring page"""
     return render_template('lead.html')
+
+
+@app.route('/social-media')
+def social_media_page():
+    """Post creation page"""
+    return render_template('social_media.html')
 
 
 # ============= ERROR HANDLERS =============

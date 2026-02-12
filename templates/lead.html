@@ -18,6 +18,7 @@
             <a href="/campaign" class="nav-link">Campaigns</a>
             <a href="/pitch" class="nav-link">Pitches</a>
             <a href="/lead" class="nav-link active">Leads</a>
+            <a href="/social-media" class="nav-link">Post Creation</a>
             <button id="logoutBtn" class="btn btn-logout">Logout</button>
         </div>
     </nav>
@@ -109,7 +110,8 @@
                     <div class="placeholder-icon">🤖</div>
                     <h3>Lead Qualification Insights</h3>
                     <p>AI evaluates leads based on <strong>Budget, Need, Urgency, Authority,</strong> and
-                        <strong>Industry fit.</strong></p>
+                        <strong>Industry fit.</strong>
+                    </p>
                     <p class="secondary-text">Enter lead details and click "Score Lead" to see a detailed assessment.
                     </p>
                 </div>
@@ -174,30 +176,30 @@
                         </div>
                     </div>
 
-                        </div>
-                    </div>
-
-                    <!-- Feedback Section -->
-                    <div id="feedbackSection" class="feedback-section" style="display: none;">
-                        <h4>Was this lead analysis helpful?</h4>
-                        <div class="feedback-buttons">
-                            <button class="feedback-btn" id="feedbackUp" onclick="handleFeedback(true)">
-                                👍 <span>Yes</span>
-                            </button>
-                            <button class="feedback-btn" id="feedbackDown" onclick="handleFeedback(false)">
-                                👎 <span>No</span>
-                            </button>
-                        </div>
-                        <div id="feedbackMsg" class="feedback-message">Thank you for your feedback!</div>
-                    </div>
-
-                    <div class="output-actions">
-                        <button id="scoreLeadBtn" class="btn btn-success">
-                            ✓ Save Scoring
-                        </button>
-                    </div>
                 </div>
             </div>
+
+            <!-- Feedback Section -->
+            <div id="feedbackSection" class="feedback-section" style="display: none;">
+                <h4>Was this lead analysis helpful?</h4>
+                <div class="feedback-buttons">
+                    <button class="feedback-btn" id="feedbackUp" onclick="handleFeedback(true)">
+                        👍 <span>Yes</span>
+                    </button>
+                    <button class="feedback-btn" id="feedbackDown" onclick="handleFeedback(false)">
+                        👎 <span>No</span>
+                    </button>
+                </div>
+                <div id="feedbackMsg" class="feedback-message">Thank you for your feedback!</div>
+            </div>
+
+            <div class="output-actions">
+                <button id="scoreLeadBtn" class="btn btn-success">
+                    ✓ Save Scoring
+                </button>
+            </div>
+        </div>
+        </div>
         </div>
     </main>
 
@@ -222,10 +224,12 @@
             </div>
             <textarea id="feedbackDetails" class="feedback-details" placeholder="Share details (optional)"></textarea>
             <div class="modal-disclaimer">
-                Your conversation will be included with your feedback to help improve MarketAI. <a href="#">Learn more</a>
+                Your conversation will be included with your feedback to help improve MarketAI. <a href="#">Learn
+                    more</a>
             </div>
             <div class="modal-footer">
-                <button id="submitDetailedFeedback" class="btn-submit-feedback" onclick="submitDetailedFeedback()" disabled>Submit</button>
+                <button id="submitDetailedFeedback" class="btn-submit-feedback" onclick="submitDetailedFeedback()"
+                    disabled>Submit</button>
             </div>
         </div>
     </div>
@@ -471,7 +475,7 @@
 
         async function handleFeedback(isPositive) {
             if (!currentLeadId) return;
-            
+
             if (isPositive) {
                 await submitFeedback(true);
                 document.getElementById('feedbackMsg').style.display = 'block';
@@ -517,9 +521,9 @@
             const selectedChips = document.querySelectorAll('.reason-chip.selected');
             const reasons = Array.from(selectedChips).map(c => c.textContent);
             const details = document.getElementById('feedbackDetails').value;
-            
+
             await submitFeedback(false, reasons, details);
-            
+
             closeFeedbackModal();
             document.getElementById('feedbackMsg').style.display = 'block';
             document.getElementById('feedbackMsg').textContent = 'Thank you for your detailed feedback!';
@@ -531,7 +535,7 @@
 
         async function submitFeedback(isPositive, reasons = [], details = '') {
             const token = localStorage.getItem('token');
-            
+
             try {
                 const response = await fetch('/api/feedback', {
                     method: 'POST',
@@ -547,7 +551,7 @@
                         details: details
                     })
                 });
-                
+
                 return response.ok;
             } catch (error) {
                 console.error('Error submitting feedback:', error);
