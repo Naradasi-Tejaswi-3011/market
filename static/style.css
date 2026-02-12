@@ -219,6 +219,46 @@ textarea:focus {
     box-shadow: 0 0 0 3px rgba(129, 140, 248, 0.1);
 }
 
+/* ============= PASSWORD TOGGLE ============= */
+
+.password-wrapper {
+    position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+}
+
+.password-wrapper input[type="password"],
+.password-wrapper input[type="text"] {
+    padding-right: 2.75rem;
+    width: 100%;
+}
+
+.password-toggle {
+    position: absolute;
+    right: 0.75rem;
+    top: 50%;
+    transform: translateY(-50%);
+    background: none;
+    border: none;
+    cursor: pointer;
+    padding: 0.5rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--text-light);
+    transition: color 0.3s;
+}
+
+.password-toggle:hover {
+    color: var(--primary);
+}
+
+.password-toggle .eye-icon {
+    width: 20px;
+    height: 20px;
+}
+
 /* ============= BUTTONS ============= */
 
 .btn {
