@@ -18,6 +18,7 @@
             <a href="/campaign" class="nav-link active">Campaigns</a>
             <a href="/pitch" class="nav-link">Pitches</a>
             <a href="/lead" class="nav-link">Leads</a>
+            <a href="/social-media" class="nav-link">Post Creation</a>
             <button id="logoutBtn" class="btn btn-logout">Logout</button>
         </div>
     </nav>
@@ -138,7 +139,8 @@
                 <div id="campaignOutput" style="display: none;">
                     <div style="position: relative; margin-bottom: 1rem;">
                         <h3>Generated Campaign for <span id="platformName"></span></h3>
-                        <button type="button" class="modal-close" onclick="window.closeCampaignOutput()" title="Close" style="position: absolute; right: 1.5rem; top: 0;">&times;</button>
+                        <button type="button" class="modal-close" onclick="window.closeCampaignOutput()" title="Close"
+                            style="position: absolute; right: 1.5rem; top: 0;">&times;</button>
                     </div>
                     <!-- Tab Navigation -->
                     <div class="tab-navigation">
@@ -192,6 +194,7 @@
                         </div>
                         <div id="feedbackMsg" class="feedback-message">Thank you for your feedback!</div>
                     </div>
+
 
                 </div>
 
@@ -480,7 +483,7 @@
             }
         }
 
-        window.closeCampaignOutput = function() {
+        window.closeCampaignOutput = function () {
             document.getElementById('campaignOutput').style.display = 'none';
             document.getElementById('toolDescription').style.display = 'block';
             document.getElementById('campaignForm').reset();
@@ -491,7 +494,6 @@
             // Attach form submit handler
             document.getElementById('campaignForm').addEventListener('submit', generateCampaign);
             document.getElementById('logoutBtn').addEventListener('click', logout);
-
             // Tab switching functionality
             const tabBtns = document.querySelectorAll('.tab-btn');
             const tabContents = document.querySelectorAll('.tab-content');
@@ -509,6 +511,7 @@
                     document.getElementById(`tab-${tabName}`).classList.add('active');
                 });
             });
+
         });
     </script>
 </body>

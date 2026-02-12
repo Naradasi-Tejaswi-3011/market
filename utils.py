@@ -74,6 +74,22 @@ def save_lead_to_db(user_id, budget, business_need, urgency, authority, industry
     return str(result.inserted_id)
 
 
+def save_social_post_to_db(user_id, product, dept, description, contact, others, ai_output):
+    """Save created post to MongoDB"""
+    from models import SocialPost
+    db = get_db()
+    
+    post = SocialPost(user_id, product, dept, description, contact, others, ai_output)
+    result = db.social_posts.insert_one(post.to_dict())
+    
+    log_activity(user_id, 'social_post_created', {
+        'product': product,
+        'platforms': list(ai_output.get('captions', {}).keys())
+    })
+    
+    return str(result.inserted_id)
+
+
 def save_feedback_to_db(user_id, item_id, item_type, rating, reasons=None, details=None):
     """Save feedback to MongoDB"""
     from models import Feedback
@@ -221,3 +237,58 @@ def get_lead_by_id(lead_id):
         lead['user_id'] = str(lead['user_id'])
     
     return lead
+
+
+def get_social_post_by_id(post_id):
+    """Get created post by ID"""
+    db = get_db()
+    post = db.social_posts.find_one({'_id': ObjectId(post_id)})
+    
+    if post:
+        post['_id'] = str(post['_id'])
+        post['user_id'] = str(post['user_id'])
+    
+    return post
+
+
+def get_user_social_posts(user_id, limit=10):
+    """Get user's created posts from database"""
+    db = get_db()
+    posts = list(db.social_posts.find(
+        {'user_id': ObjectId(user_id)}
+    ).sort('created_at', -1).limit(limit))
+    
+    # Convert ObjectId to string
+    for post in posts:
+        post['_id'] = str(post['_id'])
+        post['user_id'] = str(post['user_id'])
+    
+    return posts
+
+
+def delete_pitch_from_db(pitch_id, user_id):
+    """Delete pitch from database"""
+    db = get_db()
+    result = db.pitches.delete_one({
+        '_id': ObjectId(pitch_id),
+        'user_id': ObjectId(user_id)
+    })
+    
+    if result.deleted_count > 0:
+        log_activity(ObjectId(user_id), 'pitch_deleted', {'pitch_id': pitch_id})
+        return True
+    return False
+
+
+def delete_social_post_from_db(post_id, user_id):
+    """Delete created post from database"""
+    db = get_db()
+    result = db.social_posts.delete_one({
+        '_id': ObjectId(post_id),
+        'user_id': ObjectId(user_id)
+    })
+    
+    if result.deleted_count > 0:
+        log_activity(ObjectId(user_id), 'social_post_deleted', {'post_id': post_id})
+        return True
+    return False

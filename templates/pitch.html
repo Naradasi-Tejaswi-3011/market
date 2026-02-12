@@ -18,6 +18,7 @@
             <a href="/campaign" class="nav-link">Campaigns</a>
             <a href="/pitch" class="nav-link active">Pitches</a>
             <a href="/lead" class="nav-link">Leads</a>
+            <a href="/social-media" class="nav-link">Post Creation</a>
             <button id="logoutBtn" class="btn btn-logout">Logout</button>
         </div>
     </nav>
@@ -156,9 +157,11 @@
 
                 <div id="pitchOutput" style="display: none;">
                     <div class="output-card" style="position: relative;">
-                        <button type="button" class="modal-close" onclick="window.closePitchOutput()" title="Close" style="position: absolute; right: 1.5rem; top: 1.5rem;">&times;</button>
+                        <button type="button" class="modal-close" onclick="window.closePitchOutput()" title="Close"
+                            style="position: absolute; right: 1.5rem; top: 1.5rem;">&times;</button>
                         <div class="pitch-header">
-                            <div style="display: flex; justify-content: space-between; align-items: start; width: 100%;">
+                            <div
+                                style="display: flex; justify-content: space-between; align-items: start; width: 100%;">
                                 <div>
                                     <h3 id="resultProductName">Product Name</h3>
                                     <span id="resultDate" class="date-badge"></span>
@@ -257,6 +260,37 @@
         </div>
     </div>
 
+    <style>
+        .pitch-item {
+            position: relative;
+            padding-right: 3rem !important;
+        }
+
+        .delete-btn {
+            position: absolute;
+            right: 1rem;
+            top: 50%;
+            transform: translateY(-50%);
+            background: rgba(239, 68, 68, 0.1);
+            color: #ef4444;
+            border: none;
+            width: 2rem;
+            height: 2rem;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: all 0.2s;
+            font-weight: bold;
+            z-index: 10;
+        }
+
+        .delete-btn:hover {
+            background: #ef4444;
+            color: white;
+        }
+    </style>
     <script src="{{ url_for('static', filename='app.js') }}"></script>
     <script>
         let currentPitchId = null;
@@ -444,6 +478,7 @@
                             <div class="pitch-item" onclick="viewPitch('${p._id}')" style="cursor: pointer;">
                                 <h5>${p.product} → ${p.persona}</h5>
                                 <small>${new Date(p.created_at).toLocaleString()}</small>
+                                <button class="delete-btn" onclick="event.stopPropagation(); deletePitch('${p._id}')" title="Delete">&times;</button>
                             </div>
                         `).join('')
                         : '<p>No pitches yet</p>';
@@ -495,15 +530,32 @@
             }
         }
 
-
-        window.closePitchOutput = function() {
+        window.closePitchOutput = function () {
             document.getElementById('pitchOutput').style.display = 'none';
             document.getElementById('toolDescription').style.display = 'block';
             document.getElementById('pitchForm').reset();
         }
-
         document.addEventListener('DOMContentLoaded', () => {
         });
+        async function deletePitch(pitchId) {
+            if (!confirm('Are you sure you want to delete this pitch from history?')) return;
+
+            const token = localStorage.getItem('token');
+            try {
+                const response = await fetch(`/api/pitches/${pitchId}`, {
+                    method: 'DELETE',
+                    headers: { 'Authorization': `Bearer ${token}` }
+                });
+
+                if (response.ok) {
+                    loadPitches();
+                } else {
+                    alert('Failed to delete pitch');
+                }
+            } catch (error) {
+                console.error('Error deleting pitch:', error);
+            }
+        }
     </script>
 </body>
 

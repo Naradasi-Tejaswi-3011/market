@@ -1,9 +1,18 @@
 import os
 import json
+import requests
+import urllib.parse
+import random
 from groq import Groq
 from dotenv import load_dotenv
 
 load_dotenv()
+
+# Pollinations AI is used as a free alternative to OpenAI
+POLLINATIONS_TEXT_URL = "https://text.pollinations.ai/"
+POLLINATIONS_IMAGE_URL = "https://image.pollinations.ai/prompt/"
+HF_IMAGE_MODEL = "https://api-inference.huggingface.co/models/runwayml/stable-diffusion-v1-5"
+HF_API_KEY = os.getenv('HUGGING_FACE_API_KEY')
 
 # Initialize Groq client safely
 try:
@@ -605,3 +614,118 @@ def _intelligent_pitch_fallback(product, description, persona, industry, custome
         },
         "ai_model": f"Intelligent Fallback ({language} Template)"
     }
+
+def generate_huggingface_image(prompt):
+    """
+    Generate image using HuggingFace Inference API.
+    Returns base64 encoded image string.
+    """
+    if not HF_API_KEY:
+        print("[WARNING] HUGGING_FACE_API_KEY missing. Image generation skipped.")
+        return None
+        
+    try:
+        headers = {"Authorization": f"Bearer {HF_API_KEY}"}
+        payload = {"inputs": prompt, "options": {"wait_for_model": True}}
+        
+        response = requests.post(HF_IMAGE_MODEL, headers=headers, json=payload)
+        
+        if response.status_code == 200:
+            import base64
+            img_base64 = base64.b64encode(response.content).decode('utf-8')
+            return f"data:image/jpeg;base64,{img_base64}"
+        else:
+            print(f"[ERROR] HF API Error: {response.status_code} - {response.text}")
+            return None
+    except Exception as e:
+        print(f"[ERROR] HF Image generation failed: {e}")
+        return None
+
+
+def generate_social_post(product, dept, description, contact, others):
+    """
+    Generate post creation content using Pollinations AI.
+    Focuses on high-quality text generation for CSS-based posters.
+    """
+    try:
+        # 1. Generate Captions and Tagline using Pollinations Text API
+        system_msg = "You are a professional marketing agency director. You must return ONLY valid JSON."
+        user_msg = f"""Create a multi-platform sales campaign.
+
+PRODUCT/SERVICE: {product}
+PRODUCTION: {dept}
+SUMMARY: {description}
+CONTACT: {contact}
+EXTRA: {others}
+
+TASK:
+1. TAGLINE: Create a catchy, short marketing tagline (max 10 words) for {product}.
+2. CAPTIONS: Create platform-specific captions:
+   - LinkedIn: Detailed, professional, and engaging.
+   - Instagram: Short, catchy, including relevant hashtags.
+   - Twitter: Punchy, 1-2 lines only.
+
+Return ONLY valid JSON:
+{{
+  "tagline": "Your short tagline here",
+  "captions": {{
+    "LinkedIn": "Detailed LinkedIn post...",
+    "Instagram": "Short Instagram post with #hashtags...",
+    "Twitter": "1-2 line Twitter post..."
+  }}
+}}
+"""
+        
+        full_prompt = f"System: {system_msg}\nUser: {user_msg}"
+        encoded_prompt = urllib.parse.quote(full_prompt)
+        
+        text_response = requests.get(f"{POLLINATIONS_TEXT_URL}{encoded_prompt}?json=true&model=openai")
+        
+        if text_response.status_code != 200:
+            text_response = requests.get(f"{POLLINATIONS_TEXT_URL}{encoded_prompt}?json=true")
+            
+        if text_response.status_code != 200:
+            return {'status': 'error', 'message': 'Pollinations Text API failed'}
+            
+        try:
+            content = text_response.text
+            if "```json" in content:
+                content = content.split("```json")[1].split("```")[0].strip()
+            elif "```" in content:
+                content = content.split("```")[1].split("```")[0].strip()
+            
+            gpt_data = json.loads(content)
+        except:
+            gpt_data = {
+                "tagline": f"Premium {product} for your needs",
+                "captions": {
+                    "LinkedIn": f"🚀 Boost your sales with {product} from {dept}! {description} \n\n📞 Contact: {contact}",
+                    "Instagram": f"Transform your workflow with {product}! ✨ #Innovation {dept} #BusinessSuccess",
+                    "Twitter": f"Experience excellence with {product}. Get in touch today! 📞 {contact}"
+                }
+            }
+
+        tagline = gpt_data.get('tagline', "")
+        captions = gpt_data.get('captions', {})
+
+        # 2. Generate Background Image using HuggingFace
+        image_prompt = f"Modern professional SaaS marketing poster background, abstract tech gradient, minimal clean layout, dark or soft gradient theme, space for headline and call-to-action text, suitable for professional promotion, corporate style, high quality background, no text"
+        
+        # Enrich prompt with product context
+        if product and description:
+            image_prompt += f", inspired by {product} ({description[:50]})"
+            
+        bg_image_url = generate_huggingface_image(image_prompt)
+
+        return {
+            'status': 'success',
+            'post': {
+                'captions': captions,
+                'tagline': tagline,
+                'image_url': bg_image_url
+            }
+        }
+
+    except Exception as e:
+        print(f"[ERROR] Social post generation error: {e}")
+        return {'status': 'error', 'message': str(e)}

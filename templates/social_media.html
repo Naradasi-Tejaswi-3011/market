@@ -1,0 +1,306 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Post Creation - MarketAI Suite</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+
+</head>
+
+<body>
+    <nav class="navbar">
+        <div class="nav-brand">
+            <h1><span class="logo-icon"></span> MarketAI Suite</h1>
+        </div>
+        <div class="nav-menu">
+            <a href="/" class="nav-link">Home</a>
+            <a href="/campaign" class="nav-link">Campaigns</a>
+            <a href="/pitch" class="nav-link">Pitches</a>
+            <a href="/lead" class="nav-link">Leads</a>
+            <a href="/social-media" class="nav-link active">Post Creation</a>
+            <button id="logoutBtn" class="btn btn-logout">Logout</button>
+        </div>
+    </nav>
+
+    <main class="container">
+        <div class="page-header">
+            <h2>📱 Post Creation</h2>
+            <p>Create viral captions and professional posters in seconds</p>
+        </div>
+
+        <div class="content-grid">
+            <!-- Input Form -->
+            <div class="form-section">
+                <h3>Post Details</h3>
+                <form id="socialForm" class="form-group">
+                    <div>
+                        <label for="product">Product Name *</label>
+                        <input type="text" id="product" name="product" placeholder="e.g., TechFlow Pro" required>
+                    </div>
+
+                    <div>
+                        <label for="dept">Production Department *</label>
+                        <input type="text" id="dept" name="dept" placeholder="e.g., Audio Engineering" required>
+                    </div>
+
+                    <div>
+                        <label for="description">Product Description *</label>
+                        <textarea id="description" name="description" rows="4"
+                            placeholder="Describe what the product does and its key benefits..." required></textarea>
+                    </div>
+
+                    <div>
+                        <label for="contact">Contact Details *</label>
+                        <input type="text" id="contact" name="contact"
+                            placeholder="e.g., email@example.com or +1 234 567" required>
+                    </div>
+
+                    <div>
+                        <label for="others">Other Relevant Details</label>
+                        <textarea id="others" name="others" rows="2"
+                            placeholder="Any specific tone, colors, or call to action?"></textarea>
+                    </div>
+
+                    <button type="submit" class="btn btn-primary btn-block">
+                        Generate Post Content
+                    </button>
+                </form>
+
+                <div id="formMessage" class="message"></div>
+            </div>
+
+            <!-- Output Results -->
+            <div class="results-section">
+                <div id="toolDescription" class="tool-description">
+                    <h3>Explainable Post Generation</h3>
+                    <p>Powered by Pollinations AI for free, high-speed copy and visuals.</p>
+                    <div class="how-it-works">
+                        <h4>How It Works</h4>
+                        <ol>
+                            <li>Enter your product and department details</li>
+                            <li>Provide a clear description and contact info</li>
+                            <li>Select your target platform</li>
+                            <li>Click Generate to get a custom caption and an AI poster</li>
+                        </ol>
+                    </div>
+                </div>
+
+                <div id="loadingSpinner" class="spinner" style="display: none;">
+                    <div class="spinner-content">
+                        <div class="spinner-circle"></div>
+                        <p id="spinnerText">Generating viral content and AI poster...</p>
+                    </div>
+                </div>
+
+                <div id="postOutput" style="display: none;">
+                    <div class="social-output-container">
+                        <div class="poster-preview">
+                            <div class="poster-overlay">
+                                <div class="overlay-header">
+                                    <h2 id="overlayProduct" class="overlay-headline"></h2>
+                                    <p id="overlayDept" class="overlay-subheadline"></p>
+                                </div>
+                                <div id="overlayTagline" class="overlay-tagline"></div>
+                                <div id="overlayContact" class="overlay-footer"></div>
+                            </div>
+                        </div>
+
+                        <div class="captions-grid" id="captionsGrid">
+                            <!-- Captions will be injected here -->
+                        </div>
+                    </div>
+
+                    <div style="margin-top: 1rem; width: 100%; display: flex; justify-content: center;">
+                        <button class="btn btn-outline" onclick="downloadPosterPDF()">
+                            <span style="margin-right: 0.5rem;">📥</span> Download PDF Poster
+                        </button>
+                    </div>
+                </div>
+
+
+            </div>
+        </div>
+    </main>
+
+    <p>&copy; 2026 MarketAI Suite - AI-Powered Post Creation</p>
+
+    <script src="{{ url_for('static', filename='app.js') }}"></script>
+    <script>
+        let currentPost = null;
+
+        document.addEventListener('DOMContentLoaded', () => {
+            checkAuth();
+
+            document.getElementById('socialForm').addEventListener('submit', generateSocialPost);
+        });
+
+        async function generateSocialPost(e) {
+            e.preventDefault();
+
+            const token = localStorage.getItem('token');
+            const formData = {
+                product: document.getElementById('product').value,
+                dept: document.getElementById('dept').value,
+                description: document.getElementById('description').value,
+                contact: document.getElementById('contact').value,
+                others: document.getElementById('others').value
+            };
+
+            // Show spinner
+            document.getElementById('loadingSpinner').style.display = 'flex';
+            document.getElementById('postOutput').style.display = 'none';
+            document.getElementById('toolDescription').style.display = 'none';
+            document.getElementById('formMessage').textContent = '';
+
+            try {
+                const response = await fetch('/api/social-media/generate', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': `Bearer ${token}`
+                    },
+                    body: JSON.stringify(formData)
+                });
+
+                const data = await response.json();
+                document.getElementById('loadingSpinner').style.display = 'none';
+
+                if (response.ok) {
+                    displayPostOutput(data.post, formData);
+                    currentPost = data;
+                } else {
+                    document.getElementById('formMessage').textContent = data.message || data.error || 'Error generating post';
+                    document.getElementById('formMessage').classList.add('error');
+                    document.getElementById('toolDescription').style.display = 'block';
+                }
+            } catch (error) {
+                document.getElementById('loadingSpinner').style.display = 'none';
+                document.getElementById('formMessage').textContent = 'Network error. Please try again.';
+                document.getElementById('formMessage').classList.add('error');
+                document.getElementById('toolDescription').style.display = 'block';
+            }
+        }
+
+        function displayPostOutput(post, metadata = null) {
+            const product = metadata ? metadata.product : (document.getElementById('product').value || 'Your Product');
+            const dept = metadata ? metadata.dept : (document.getElementById('dept').value || 'Marketing Pro');
+            const contact = metadata ? metadata.contact : (document.getElementById('contact').value || 'Contact Support');
+
+            // Update Overlays
+            document.getElementById('overlayProduct').textContent = product;
+            document.getElementById('overlayDept').textContent = dept;
+            document.getElementById('overlayTagline').textContent = post.tagline || 'Excellence in every detail.';
+            document.getElementById('overlayContact').textContent = `CONTACT: ${contact}`;
+
+            // Handle multiple captions
+            const grid = document.getElementById('captionsGrid');
+            grid.innerHTML = '';
+
+            const platforms = ['LinkedIn', 'Instagram', 'Twitter'];
+            const platformIcons = { 'LinkedIn': '💼', 'Instagram': '📸', 'Twitter': '🐦' };
+
+            platforms.forEach(p => {
+                if (post.captions && post.captions[p]) {
+                    const card = document.createElement('div');
+                    card.className = 'caption-card';
+                    card.innerHTML = `
+                        <h5>${platformIcons[p]} ${p} Caption</h5>
+                        <button class="copy-btn" onclick="copyCaptionText('${p}')">Copy</button>
+                        <pre id="caption-${p}">${post.captions[p]}</pre>
+                    `;
+                    grid.appendChild(card);
+                }
+            });
+
+            const poster = document.querySelector('.poster-preview');
+
+            if (post.image_url) {
+                // Use AI Generated Background
+                poster.classList.remove('flyer-t1', 'flyer-t2', 'flyer-t3');
+                poster.classList.add('ai-bg');
+                poster.style.backgroundImage = `url(${post.image_url})`;
+            } else {
+                // Fallback to random template
+                poster.classList.remove('ai-bg');
+                poster.style.backgroundImage = '';
+                poster.classList.remove('flyer-t1', 'flyer-t2', 'flyer-t3');
+                const templateNum = (metadata && metadata.template_id) ? metadata.template_id : Math.floor(Math.random() * 3) + 1;
+                poster.classList.add(`flyer-t${templateNum}`);
+                poster.dataset.template = templateNum;
+            }
+
+            document.getElementById('postOutput').style.display = 'block';
+        }
+
+
+
+
+
+        function copyCaptionText(platform) {
+            const text = document.getElementById(`caption-${platform}`).textContent;
+            navigator.clipboard.writeText(text).then(() => {
+                const btn = event.target;
+                const originalText = btn.textContent;
+                btn.textContent = 'Copied!';
+                btn.style.background = '#10b981';
+                setTimeout(() => {
+                    btn.textContent = originalText;
+                    btn.style.background = '';
+                }, 2000);
+            });
+        }
+
+        async function downloadPosterPDF() {
+            const poster = document.querySelector('.poster-preview');
+            const product = document.getElementById('overlayProduct').textContent || 'poster';
+
+            const btn = document.querySelector('.btn-outline');
+            const originalText = btn.innerHTML;
+            btn.innerHTML = '<span>⏳</span> Exporting...';
+            btn.disabled = true;
+
+            try {
+                const canvas = await html2canvas(poster, {
+                    scale: 3, // High quality
+                    useCORS: true,
+                    backgroundColor: '#ffffff'
+                });
+
+                const imgData = canvas.toDataURL('image/png');
+                const { jsPDF } = window.jspdf;
+
+                // Calculate dimensions for A4
+                const pdf = new jsPDF({
+                    orientation: 'portrait',
+                    unit: 'mm',
+                    format: 'a4'
+                });
+
+                const imgProps = pdf.getImageProperties(imgData);
+                const pdfWidth = pdf.internal.pageSize.getWidth();
+                const pdfHeight = (imgProps.height * pdfWidth) / imgProps.width;
+
+                pdf.addImage(imgData, 'PNG', 0, 0, pdfWidth, pdfHeight);
+                pdf.save(`${product.toLowerCase().replace(/\s+/g, '-')}-flyer.pdf`);
+
+                btn.innerHTML = '<span>✅</span> Done!';
+                setTimeout(() => {
+                    btn.innerHTML = originalText;
+                    btn.disabled = false;
+                }, 2000);
+            } catch (error) {
+                console.error('PDF Export Error:', error);
+                alert('Export failed. Please try again.');
+                btn.innerHTML = originalText;
+                btn.disabled = false;
+            }
+        }
+
+    </script>
+</body>
+
+</html>
